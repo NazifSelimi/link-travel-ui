@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import uiReducer from './slices/uiSlice';
 import authReducer from './slices/authSlice';
-import adminReducer from './slices/adminSlice';
 import { linktravelApi } from './linktravelApi';
 
 export const store = configureStore({
@@ -9,7 +8,6 @@ export const store = configureStore({
     [linktravelApi.reducerPath]: linktravelApi.reducer,
     ui: uiReducer,
     auth: authReducer,
-    admin: adminReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

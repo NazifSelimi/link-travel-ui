@@ -20,6 +20,7 @@ import {
 } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { logout } from '@/store/slices/authSlice';
+import { useGetAdminDashboardQuery } from '@/store/linktravelApi';
 
 const { Sider, Content, Header } = Layout;
 const { Title, Text } = Typography;
@@ -41,9 +42,8 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((s) => s.auth);
-  const pendingCount = useAppSelector(
-    (s) => s.admin.dashboard?.stats.pending_reservations ?? 0,
-  );
+  const { data: dashboard } = useGetAdminDashboardQuery();
+  const pendingCount = dashboard?.stats.pending_reservations ?? 0;
 
   const menuItems = useMemo(
     () => [

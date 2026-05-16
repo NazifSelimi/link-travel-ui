@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Typography,
@@ -21,8 +20,7 @@ import {
   GiftOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchDashboard } from '@/store/slices/adminSlice';
+import { useGetAdminDashboardQuery } from '@/store/linktravelApi';
 import type { AdminReservation } from '@/types';
 
 const { Text } = Typography;
@@ -35,12 +33,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminDashboardPage() {
-  const dispatch = useAppDispatch();
-  const { dashboard, loading } = useAppSelector((s) => s.admin);
-
-  useEffect(() => {
-    dispatch(fetchDashboard());
-  }, [dispatch]);
+  const { data: dashboard, isLoading, isError } = useGetAdminDashboardQuery();
 
   const stats = dashboard?.stats;
 
@@ -84,7 +77,7 @@ export default function AdminDashboardPage() {
     },
   ];
 
-  if (loading.dashboard) {
+  if (isLoading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}>
         <Spin size="large" />
@@ -92,7 +85,7 @@ export default function AdminDashboardPage() {
     );
   }
 
-  if (!dashboard && !loading.dashboard) {
+  if (isError || !dashboard) {
     return (
       <Alert
         title="Error Loading Dashboard"

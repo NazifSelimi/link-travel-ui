@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type {
   AdminReservation,
   ContactMessage,
+  DashboardStats,
   Destination,
   Hotel,
   Reservation,
@@ -411,6 +412,7 @@ export const linktravelApi = createApi({
     'Admin.Reviews',
     'Admin.Contacts',
     'Admin.Users',
+    'Admin.Dashboard',
   ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
@@ -878,6 +880,26 @@ export const linktravelApi = createApi({
         { type: 'Admin.Users', id: 'LIST' },
       ],
     }),
+
+    // ── Admin · Dashboard ──────────────────────────────────────────────
+    // The dashboard aggregates stats from other admin resources; mutations
+    // on those resources should invalidate this tag so the numbers stay
+    // fresh. For now we keep dependencies minimal — the page is normally
+    // visited fresh and the stats are not time-critical.
+    getAdminDashboard: builder.query<DashboardStats, void>({
+      query: () => '/admin/dashboard',
+      transformResponse: (response: ApiEnvelope<DashboardStats>) => {
+        // Normalize nested AdminReservation rows so ids are strings and
+        // relations go through the admin mappers.
+        const data = response.data;
+        return {
+          ...data,
+          recentReservations: (data.recentReservations ?? []).map(mapAdminReservation),
+          popularDestinations: (data.popularDestinations ?? []).map(mapAdminDestination),
+        };
+      },
+      providesTags: [{ type: 'Admin.Dashboard', id: 'STATS' }],
+    }),
   }),
 });
 
@@ -940,4 +962,6 @@ export const {
   useGetAdminUsersQuery,
   useUpdateAdminUserMutation,
   useDeleteAdminUserMutation,
+  // Admin · Dashboard
+  useGetAdminDashboardQuery,
 } = linktravelApi;
