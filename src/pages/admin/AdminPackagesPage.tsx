@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import {
   Alert,
   Card,
@@ -20,12 +20,11 @@ import type { ColumnsType } from 'antd/es/table';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   fetchAdminPackages,
-  fetchAdminHotels,
   createPackage,
   updatePackage,
   deletePackage,
 } from '@/store/slices/adminSlice';
-import { useGetAdminDestinationsQuery } from '@/store/linktravelApi';
+import { useGetAdminDestinationsQuery, useGetAdminHotelsQuery } from '@/store/linktravelApi';
 import { LocationPicker } from '@/components/admin/LocationPicker';
 import { ImageGalleryField } from '@/components/admin/ImageGalleryField';
 import { normalizeTagValues, packageIncludeOptions } from '@/lib/adminFieldOptions';
@@ -44,11 +43,13 @@ const packageCategoryOptions = [
 
 export default function AdminPackagesPage() {
   const dispatch = useAppDispatch();
-  const { packages, hotels, loading } = useAppSelector((s) => s.admin);
+  const { packages, loading } = useAppSelector((s) => s.admin);
 
-  // Destinations dropdown via RTK Query (read-only consumer of the admin list).
+  // Destinations + Hotels dropdowns via RTK Query (read-only consumers).
   const { data: destinationsData } = useGetAdminDestinationsQuery({ per_page: 100 });
-  const destinationItems = destinationsData?.items ?? [];
+  const destinationItems = useMemo(() => destinationsData?.items ?? [], [destinationsData]);
+  const { data: hotelsData } = useGetAdminHotelsQuery({ per_page: 200 });
+  const hotelItems = useMemo(() => hotelsData?.items ?? [], [hotelsData]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
@@ -64,18 +65,12 @@ export default function AdminPackagesPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  useEffect(() => {
-    if (hotels.data.length === 0) {
-      dispatch(fetchAdminHotels({ per_page: 200 }));
-    }
-  }, [dispatch, hotels.data.length]);
-
   const destinationOptions = destinationItems.map((destination) => ({
     value: destination.id,
     label: `${destination.name}, ${destination.country}`,
   }));
 
-  const hotelOptions = hotels.data
+  const hotelOptions = hotelItems
     .filter((hotel) => !selectedDestinationId || hotel.destinationId === selectedDestinationId)
     .map((hotel) => ({
       value: hotel.id,
@@ -87,14 +82,14 @@ export default function AdminPackagesPage() {
       return;
     }
 
-    const selectedHotelBelongsToDestination = hotels.data.some(
+    const selectedHotelBelongsToDestination = hotelItems.some(
       (hotel) => hotel.id === selectedHotelId && hotel.destinationId === selectedDestinationId,
     );
 
     if (!selectedHotelBelongsToDestination) {
       form.setFieldValue('hotelId', undefined);
     }
-  }, [form, hotels.data, selectedDestinationId, selectedHotelId]);
+  }, [form, hotelItems, selectedDestinationId, selectedHotelId]);
 
   const handleSearch = (val: string) => {
     setSearch(val);

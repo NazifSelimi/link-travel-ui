@@ -1,14 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '@/api/client';
 import {
-  serializeHotelPayload,
   serializePackagePayload,
   serializeUserPayload,
 } from '@/api/serializers';
 import type {
   DashboardStats,
   AdminReservation,
-  Hotel,
   TravelPackage,
   User,
   PaginatedResponse,
@@ -19,12 +17,11 @@ import type {
 } from '@/types';
 
 // ─── State ──────────────────────────────────────────────────
-// NOTE: Destinations have been migrated to RTK Query (linktravelApi).
-// Other admin resources are still served by this slice and will follow
-// in subsequent Stage B PRs (Hotels → Packages → … → Dashboard).
+// NOTE: Destinations and Hotels have been migrated to RTK Query
+// (linktravelApi). Remaining admin resources will follow in
+// subsequent Stage B PRs (Packages → … → Dashboard).
 interface AdminState {
   dashboard: DashboardStats | null;
-  hotels: { data: Hotel[]; total: number; page: number; pageSize: number; totalPages: number };
   packages: { data: TravelPackage[]; total: number; page: number; pageSize: number; totalPages: number };
   reservations: { data: AdminReservation[]; total: number; page: number; pageSize: number; totalPages: number };
   users: { data: User[]; total: number; page: number; pageSize: number; totalPages: number };
@@ -39,7 +36,6 @@ const emptyPaginated = { data: [], total: 0, page: 1, pageSize: 15, totalPages: 
 
 const initialState: AdminState = {
   dashboard: null,
-  hotels: { ...emptyPaginated },
   packages: { ...emptyPaginated },
   reservations: { ...emptyPaginated },
   users: { ...emptyPaginated },
@@ -70,52 +66,6 @@ export const fetchDashboard = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await api.get<DashboardStats>('/admin/dashboard');
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-// ─── Hotels CRUD ────────────────────────────────────────────
-export const fetchAdminHotels = createAsyncThunk(
-  'admin/fetchHotels',
-  async (params: AdminListParams | undefined, { rejectWithValue }) => {
-    try {
-      return await api.get<PaginatedResponse<Hotel>>(`/admin/hotels${buildQuery(params)}`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const createHotel = createAsyncThunk(
-  'admin/createHotel',
-  async (data: Partial<Hotel>, { rejectWithValue }) => {
-    try {
-      return await api.post<Hotel>('/admin/hotels', serializeHotelPayload(data));
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const updateHotel = createAsyncThunk(
-  'admin/updateHotel',
-  async ({ id, data }: { id: string; data: Partial<Hotel> }, { rejectWithValue }) => {
-    try {
-      return await api.put<Hotel>(`/admin/hotels/${id}`, serializeHotelPayload(data));
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const deleteHotel = createAsyncThunk(
-  'admin/deleteHotel',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await api.delete(`/admin/hotels/${id}`);
-      return id;
     } catch (e) {
       return rejectWithValue((e as Error).message);
     }
@@ -413,24 +363,6 @@ const adminSlice = createSlice({
         setLoading(s, 'dashboard', false);
         s.error = a.payload as string;
       });
-
-    // Hotels
-    builder
-      .addCase(fetchAdminHotels.pending, (s) => setLoading(s, 'hotels', true))
-      .addCase(fetchAdminHotels.fulfilled, (s, a) => {
-        setLoading(s, 'hotels', false);
-        const p = a.payload as PaginatedResponse<Hotel>;
-        s.hotels = { data: p.data, total: p.total, page: p.page, pageSize: p.pageSize, totalPages: p.totalPages };
-      })
-      .addCase(fetchAdminHotels.rejected, (s, a) => {
-        setLoading(s, 'hotels', false);
-        s.error = a.payload as string;
-      });
-
-    builder.addCase(deleteHotel.fulfilled, (s, a) => {
-      s.hotels.data = s.hotels.data.filter((h) => h.id !== a.payload);
-      s.hotels.total -= 1;
-    });
 
     // Packages
     builder

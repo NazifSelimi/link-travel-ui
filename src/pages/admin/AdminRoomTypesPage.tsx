@@ -8,17 +8,17 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   createRoomType,
   deleteRoomType,
-  fetchAdminHotels,
   fetchAdminRoomTypes,
   updateRoomType,
 } from '@/store/slices/adminSlice';
+import { useGetAdminHotelsQuery } from '@/store/linktravelApi';
 import type { RoomType } from '@/types';
 
 const { TextArea } = Input;
 
 export default function AdminRoomTypesPage() {
   const dispatch = useAppDispatch();
-  const { roomTypes, hotels, loading } = useAppSelector((state) => state.admin);
+  const { roomTypes, loading } = useAppSelector((state) => state.admin);
   const [form] = Form.useForm();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -26,17 +26,15 @@ export default function AdminRoomTypesPage() {
   const [editing, setEditing] = useState<RoomType | null>(null);
   const galleryImages = Form.useWatch('images', form) ?? [];
 
+  // Hotels dropdown via RTK Query.
+  const { data: hotelsData } = useGetAdminHotelsQuery({ per_page: 200 });
+  const hotelItems = hotelsData?.items ?? [];
+
   const load = useCallback(() => {
     dispatch(fetchAdminRoomTypes({ search: search || undefined, page, per_page: 15 }));
   }, [dispatch, search, page]);
 
   useEffect(() => { load(); }, [load]);
-
-  useEffect(() => {
-    if (hotels.data.length === 0) {
-      dispatch(fetchAdminHotels({ per_page: 200 }));
-    }
-  }, [dispatch, hotels.data.length]);
 
   const openCreate = () => {
     setEditing(null);
@@ -200,7 +198,7 @@ export default function AdminRoomTypesPage() {
             <Select
               showSearch
               optionFilterProp="label"
-              options={hotels.data.map((hotel) => ({
+              options={hotelItems.map((hotel) => ({
                 value: hotel.id,
                 label: hotel.destination?.name ? `${hotel.name} (${hotel.destination.name})` : hotel.name,
               }))}

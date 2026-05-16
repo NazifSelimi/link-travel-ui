@@ -11,7 +11,7 @@ import type {
 import type { RootState } from '@/store';
 import { getApiBaseUrl } from '@/api/baseUrl';
 import { resolveMediaUrl, resolveMediaUrls } from '@/lib/media';
-import { serializeDestinationPayload } from '@/api/serializers';
+import { serializeDestinationPayload, serializeHotelPayload } from '@/api/serializers';
 
 type ApiEnvelope<T> = {
   success: boolean;
@@ -251,6 +251,17 @@ function mapAdminDestination(destination: Destination): Destination {
   };
 }
 
+function mapAdminHotel(hotel: Hotel): Hotel {
+  return {
+    ...hotel,
+    id: String(hotel.id),
+    destinationId: hotel.destinationId ? String(hotel.destinationId) : hotel.destinationId,
+    image: resolveMediaUrl(hotel.image) ?? hotel.image,
+    images: resolveMediaUrls(hotel.images),
+    destination: hotel.destination ? mapAdminDestination(hotel.destination) : undefined,
+  };
+}
+
 function mapReservation(reservation: Reservation): Reservation {
   return {
     ...reservation,
@@ -308,6 +319,7 @@ export const linktravelApi = createApi({
     'Reservations',
     'Reviews',
     'Admin.Destinations',
+    'Admin.Hotels',
   ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
@@ -488,6 +500,55 @@ export const linktravelApi = createApi({
         'Destinations',
       ],
     }),
+
+    // ── Admin · Hotels ─────────────────────────────────────────────────
+    getAdminHotels: builder.query<ListResult<Hotel>, AdminListParams | void>({
+      query: (params) => ({ url: '/admin/hotels', params: params ?? {} }),
+      transformResponse: (response: ApiEnvelope<Hotel[]>) =>
+        mapCollection(response, mapAdminHotel),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'Admin.Hotels' as const, id })),
+              { type: 'Admin.Hotels' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Admin.Hotels' as const, id: 'LIST' }],
+    }),
+    createAdminHotel: builder.mutation<Hotel, Partial<Hotel>>({
+      query: (data) => ({
+        url: '/admin/hotels',
+        method: 'POST',
+        body: serializeHotelPayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<Hotel>) => mapAdminHotel(response.data),
+      invalidatesTags: [
+        { type: 'Admin.Hotels', id: 'LIST' },
+        'Hotels',
+      ],
+    }),
+    updateAdminHotel: builder.mutation<Hotel, { id: string; data: Partial<Hotel> }>({
+      query: ({ id, data }) => ({
+        url: `/admin/hotels/${id}`,
+        method: 'PUT',
+        body: serializeHotelPayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<Hotel>) => mapAdminHotel(response.data),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Admin.Hotels', id },
+        { type: 'Admin.Hotels', id: 'LIST' },
+        { type: 'Hotels', id },
+        'Hotels',
+      ],
+    }),
+    deleteAdminHotel: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/hotels/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Hotels', id },
+        { type: 'Admin.Hotels', id: 'LIST' },
+        { type: 'Hotels', id },
+        'Hotels',
+      ],
+    }),
   }),
 });
 
@@ -518,4 +579,9 @@ export const {
   useCreateAdminDestinationMutation,
   useUpdateAdminDestinationMutation,
   useDeleteAdminDestinationMutation,
+  // Admin · Hotels
+  useGetAdminHotelsQuery,
+  useCreateAdminHotelMutation,
+  useUpdateAdminHotelMutation,
+  useDeleteAdminHotelMutation,
 } = linktravelApi;

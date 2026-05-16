@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Card,
   Table,
@@ -17,14 +17,13 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  fetchAdminHotels,
-  createHotel,
-  updateHotel,
-  deleteHotel,
-} from '@/store/slices/adminSlice';
-import { useGetAdminDestinationsQuery } from '@/store/linktravelApi';
+  useGetAdminDestinationsQuery,
+  useGetAdminHotelsQuery,
+  useCreateAdminHotelMutation,
+  useUpdateAdminHotelMutation,
+  useDeleteAdminHotelMutation,
+} from '@/store/linktravelApi';
 import { CitySelect } from '@/components/admin/CitySelect';
 import { ImageGalleryField } from '@/components/admin/ImageGalleryField';
 import { LocationPicker } from '@/components/admin/LocationPicker';
@@ -35,8 +34,6 @@ import type { Hotel } from '@/types';
 const { TextArea } = Input;
 
 export default function AdminHotelsPage() {
-  const dispatch = useAppDispatch();
-  const { hotels, loading } = useAppSelector((s) => s.admin);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
@@ -53,11 +50,19 @@ export default function AdminHotelsPage() {
     label: `${destination.name}, ${destination.country}`,
   }));
 
-  const load = useCallback(() => {
-    dispatch(fetchAdminHotels({ search: search || undefined, page, per_page: 15 }));
-  }, [dispatch, search, page]);
+  const { data, isFetching } = useGetAdminHotelsQuery({
+    search: search || undefined,
+    page,
+    per_page: 15,
+  });
+  const [createHotel, { isLoading: isCreating }] = useCreateAdminHotelMutation();
+  const [updateHotel, { isLoading: isUpdating }] = useUpdateAdminHotelMutation();
+  const [deleteHotel] = useDeleteAdminHotelMutation();
 
-  useEffect(() => { load(); }, [load]);
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const currentPage = data?.currentPage ?? page;
+  const perPage = data?.perPage ?? 15;
 
   const handleSearch = (val: string) => {
     setSearch(val);
@@ -136,7 +141,7 @@ export default function AdminHotelsPage() {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const data = {
+      const payload = {
         ...values,
         image: values.images?.[0] || '',
         amenities: normalizeTagValues(values.amenities),
@@ -146,19 +151,19 @@ export default function AdminHotelsPage() {
           cancellation: values.cancellation || null,
         },
       };
-      delete data.checkIn;
-      delete data.checkOut;
-      delete data.cancellation;
+      delete payload.checkIn;
+      delete payload.checkOut;
+      delete payload.cancellation;
 
       if (editing) {
-        await dispatch(updateHotel({ id: editing.id, data })).unwrap();
+        await updateHotel({ id: editing.id, data: payload }).unwrap();
         message.success('Hotel updated');
       } else {
-        await dispatch(createHotel(data)).unwrap();
+        await createHotel(payload).unwrap();
         message.success('Hotel created');
       }
       setModalOpen(false);
-      load();
+      // Cache invalidation triggers the refetch automatically.
     } catch {
       message.error('Failed to save hotel');
     }
@@ -166,7 +171,7 @@ export default function AdminHotelsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deleteHotel(id)).unwrap();
+      await deleteHotel(id).unwrap();
       message.success('Hotel deleted');
     } catch {
       message.error('Failed to delete hotel');
@@ -252,14 +257,14 @@ export default function AdminHotelsPage() {
         }
       >
         <Table
-          dataSource={hotels.data}
+          dataSource={items}
           columns={columns}
           rowKey="id"
-          loading={loading.hotels}
+          loading={isFetching}
           pagination={{
-            current: hotels.page,
-            pageSize: hotels.pageSize,
-            total: hotels.total,
+            current: currentPage,
+            pageSize: perPage,
+            total: total,
             onChange: (p) => setPage(p),
             showSizeChanger: false,
           }}
@@ -274,6 +279,7 @@ export default function AdminHotelsPage() {
         onOk={handleSubmit}
         width={640}
         okText={editing ? 'Update' : 'Create'}
+        confirmLoading={isCreating || isUpdating}
       >
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>
