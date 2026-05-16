@@ -1,24 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Card, Form, Input, InputNumber, message, Modal, Popconfirm, Select, Space, Switch, Table, Tag } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { ImageGalleryField } from '@/components/admin/ImageGalleryField';
 import { normalizeTagValues, roomAmenityOptions } from '@/lib/adminFieldOptions';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  createRoomType,
-  deleteRoomType,
-  fetchAdminRoomTypes,
-  updateRoomType,
-} from '@/store/slices/adminSlice';
-import { useGetAdminHotelsQuery } from '@/store/linktravelApi';
+  useGetAdminHotelsQuery,
+  useGetAdminRoomTypesQuery,
+  useCreateAdminRoomTypeMutation,
+  useUpdateAdminRoomTypeMutation,
+  useDeleteAdminRoomTypeMutation,
+} from '@/store/linktravelApi';
 import type { RoomType } from '@/types';
 
 const { TextArea } = Input;
 
 export default function AdminRoomTypesPage() {
-  const dispatch = useAppDispatch();
-  const { roomTypes, loading } = useAppSelector((state) => state.admin);
   const [form] = Form.useForm();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -30,11 +27,19 @@ export default function AdminRoomTypesPage() {
   const { data: hotelsData } = useGetAdminHotelsQuery({ per_page: 200 });
   const hotelItems = hotelsData?.items ?? [];
 
-  const load = useCallback(() => {
-    dispatch(fetchAdminRoomTypes({ search: search || undefined, page, per_page: 15 }));
-  }, [dispatch, search, page]);
+  const { data: roomTypesData, isFetching } = useGetAdminRoomTypesQuery({
+    search: search || undefined,
+    page,
+    per_page: 15,
+  });
+  const [createRoomType, { isLoading: isCreating }] = useCreateAdminRoomTypeMutation();
+  const [updateRoomType, { isLoading: isUpdating }] = useUpdateAdminRoomTypeMutation();
+  const [deleteRoomType] = useDeleteAdminRoomTypeMutation();
 
-  useEffect(() => { load(); }, [load]);
+  const items = roomTypesData?.items ?? [];
+  const total = roomTypesData?.total ?? 0;
+  const currentPage = roomTypesData?.currentPage ?? page;
+  const perPage = roomTypesData?.perPage ?? 15;
 
   const openCreate = () => {
     setEditing(null);
@@ -69,15 +74,15 @@ export default function AdminRoomTypesPage() {
       };
 
       if (editing) {
-        await dispatch(updateRoomType({ id: editing.id, data: payload })).unwrap();
+        await updateRoomType({ id: editing.id, data: payload }).unwrap();
         message.success('Room type updated');
       } else {
-        await dispatch(createRoomType(payload)).unwrap();
+        await createRoomType(payload).unwrap();
         message.success('Room type created');
       }
 
       setOpen(false);
-      load();
+      // Cache invalidation triggers the refetch automatically.
     } catch {
       message.error('Failed to save room type');
     }
@@ -85,7 +90,7 @@ export default function AdminRoomTypesPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deleteRoomType(id)).unwrap();
+      await deleteRoomType(id).unwrap();
       message.success('Room type deleted');
     } catch {
       message.error('Failed to delete room type');
@@ -171,13 +176,13 @@ export default function AdminRoomTypesPage() {
       >
         <Table
           rowKey="id"
-          dataSource={roomTypes.data}
+          dataSource={items}
           columns={columns}
-          loading={loading.roomTypes}
+          loading={isFetching}
           pagination={{
-            current: roomTypes.page,
-            pageSize: roomTypes.pageSize,
-            total: roomTypes.total,
+            current: currentPage,
+            pageSize: perPage,
+            total: total,
             onChange: (nextPage) => setPage(nextPage),
             showSizeChanger: false,
           }}
@@ -192,6 +197,7 @@ export default function AdminRoomTypesPage() {
         onOk={handleSubmit}
         width={720}
         okText={editing ? 'Update' : 'Create'}
+        confirmLoading={isCreating || isUpdating}
       >
         <Form form={form} layout="vertical">
           <Form.Item name="hotelId" label="Hotel" rules={[{ required: true }]}>

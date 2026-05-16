@@ -7,20 +7,18 @@ import type {
   User,
   PaginatedResponse,
   AdminListParams,
-  RoomType,
   Review,
   ContactMessage,
 } from '@/types';
 
 // ─── State ──────────────────────────────────────────────────
-// NOTE: Destinations, Hotels, and Packages have been migrated to
-// RTK Query (linktravelApi). Remaining admin resources will follow
-// in subsequent Stage B PRs.
+// NOTE: Destinations, Hotels, Packages, and RoomTypes have been
+// migrated to RTK Query (linktravelApi). Remaining admin resources
+// will follow in subsequent Stage B PRs.
 interface AdminState {
   dashboard: DashboardStats | null;
   reservations: { data: AdminReservation[]; total: number; page: number; pageSize: number; totalPages: number };
   users: { data: User[]; total: number; page: number; pageSize: number; totalPages: number };
-  roomTypes: { data: RoomType[]; total: number; page: number; pageSize: number; totalPages: number };
   reviews: { data: Review[]; total: number; page: number; pageSize: number; totalPages: number };
   contacts: { data: ContactMessage[]; total: number; page: number; pageSize: number; totalPages: number };
   loading: Record<string, boolean>;
@@ -33,7 +31,6 @@ const initialState: AdminState = {
   dashboard: null,
   reservations: { ...emptyPaginated },
   users: { ...emptyPaginated },
-  roomTypes: { ...emptyPaginated },
   reviews: { ...emptyPaginated },
   contacts: { ...emptyPaginated },
   loading: {},
@@ -129,74 +126,6 @@ export const deleteUser = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
       await api.delete(`/admin/users/${id}`);
-      return id;
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-// ─── Room Types ─────────────────────────────────────────────
-export const fetchAdminRoomTypes = createAsyncThunk(
-  'admin/fetchRoomTypes',
-  async (params: AdminListParams | undefined, { rejectWithValue }) => {
-    try {
-      return await api.get<PaginatedResponse<RoomType>>(`/admin/room-types${buildQuery(params)}`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const createRoomType = createAsyncThunk(
-  'admin/createRoomType',
-  async (data: Partial<RoomType>, { rejectWithValue }) => {
-    try {
-      return await api.post<RoomType>('/admin/room-types', {
-        hotel_id: data.hotelId,
-        name: data.name,
-        description: data.description,
-        max_guests: data.maxGuests,
-        bed_type: data.bedType,
-        size: data.size,
-        price_per_night: data.pricePerNight,
-        amenities: data.amenities,
-        images: data.images,
-        available: data.available,
-      });
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const updateRoomType = createAsyncThunk(
-  'admin/updateRoomType',
-  async ({ id, data }: { id: string; data: Partial<RoomType> }, { rejectWithValue }) => {
-    try {
-      return await api.put<RoomType>(`/admin/room-types/${id}`, {
-        hotel_id: data.hotelId,
-        name: data.name,
-        description: data.description,
-        max_guests: data.maxGuests,
-        bed_type: data.bedType,
-        size: data.size,
-        price_per_night: data.pricePerNight,
-        amenities: data.amenities,
-        images: data.images,
-        available: data.available,
-      });
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const deleteRoomType = createAsyncThunk(
-  'admin/deleteRoomType',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await api.delete(`/admin/room-types/${id}`);
       return id;
     } catch (e) {
       return rejectWithValue((e as Error).message);
@@ -358,34 +287,6 @@ const adminSlice = createSlice({
       .addCase(deleteUser.fulfilled, (s, a) => {
         s.users.data = s.users.data.filter((u) => u.id !== a.payload);
         s.users.total -= 1;
-      });
-
-    // Room Types
-    builder
-      .addCase(fetchAdminRoomTypes.pending, (s) => setLoading(s, 'roomTypes', true))
-      .addCase(fetchAdminRoomTypes.fulfilled, (s, a) => {
-        setLoading(s, 'roomTypes', false);
-        const p = a.payload as PaginatedResponse<RoomType>;
-        s.roomTypes = { data: p.data, total: p.total, page: p.page, pageSize: p.pageSize, totalPages: p.totalPages };
-      })
-      .addCase(fetchAdminRoomTypes.rejected, (s, a) => {
-        setLoading(s, 'roomTypes', false);
-        s.error = a.payload as string;
-      });
-
-    builder
-      .addCase(createRoomType.fulfilled, (s, a) => {
-        s.roomTypes.data.unshift(a.payload as RoomType);
-        s.roomTypes.total += 1;
-      })
-      .addCase(updateRoomType.fulfilled, (s, a) => {
-        const updated = a.payload as RoomType;
-        const idx = s.roomTypes.data.findIndex((roomType) => roomType.id === updated.id);
-        if (idx !== -1) s.roomTypes.data[idx] = updated;
-      })
-      .addCase(deleteRoomType.fulfilled, (s, a) => {
-        s.roomTypes.data = s.roomTypes.data.filter((roomType) => roomType.id !== a.payload);
-        s.roomTypes.total -= 1;
       });
 
     // Reviews

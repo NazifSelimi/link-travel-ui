@@ -266,6 +266,30 @@ function mapAdminHotel(hotel: Hotel): Hotel {
   };
 }
 
+function mapAdminRoomType(roomType: RoomType): RoomType {
+  return {
+    ...roomType,
+    id: String(roomType.id),
+    hotelId: roomType.hotelId ? String(roomType.hotelId) : roomType.hotelId,
+    images: resolveMediaUrls(roomType.images),
+  };
+}
+
+function serializeRoomTypePayload(input: Partial<RoomType>) {
+  return {
+    hotel_id: input.hotelId,
+    name: input.name,
+    description: input.description,
+    max_guests: input.maxGuests,
+    bed_type: input.bedType,
+    size: input.size,
+    price_per_night: input.pricePerNight,
+    amenities: input.amenities,
+    images: input.images,
+    available: input.available,
+  };
+}
+
 function mapAdminPackage(pkg: TravelPackage): TravelPackage {
   return {
     ...pkg,
@@ -338,6 +362,7 @@ export const linktravelApi = createApi({
     'Admin.Destinations',
     'Admin.Hotels',
     'Admin.Packages',
+    'Admin.RoomTypes',
   ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
@@ -616,6 +641,54 @@ export const linktravelApi = createApi({
         'Packages',
       ],
     }),
+
+    // ── Admin · Room Types ─────────────────────────────────────────────
+    getAdminRoomTypes: builder.query<ListResult<RoomType>, AdminListParams | void>({
+      query: (params) => ({ url: '/admin/room-types', params: params ?? {} }),
+      transformResponse: (response: ApiEnvelope<RoomType[]>) =>
+        mapCollection(response, mapAdminRoomType),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'Admin.RoomTypes' as const, id })),
+              { type: 'Admin.RoomTypes' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Admin.RoomTypes' as const, id: 'LIST' }],
+    }),
+    createAdminRoomType: builder.mutation<RoomType, Partial<RoomType>>({
+      query: (data) => ({
+        url: '/admin/room-types',
+        method: 'POST',
+        body: serializeRoomTypePayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<RoomType>) => mapAdminRoomType(response.data),
+      invalidatesTags: [
+        { type: 'Admin.RoomTypes', id: 'LIST' },
+        // A new room type can affect Hotel detail pages.
+        'Hotels',
+      ],
+    }),
+    updateAdminRoomType: builder.mutation<RoomType, { id: string; data: Partial<RoomType> }>({
+      query: ({ id, data }) => ({
+        url: `/admin/room-types/${id}`,
+        method: 'PUT',
+        body: serializeRoomTypePayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<RoomType>) => mapAdminRoomType(response.data),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Admin.RoomTypes', id },
+        { type: 'Admin.RoomTypes', id: 'LIST' },
+        'Hotels',
+      ],
+    }),
+    deleteAdminRoomType: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/room-types/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.RoomTypes', id },
+        { type: 'Admin.RoomTypes', id: 'LIST' },
+        'Hotels',
+      ],
+    }),
   }),
 });
 
@@ -656,4 +729,9 @@ export const {
   useCreateAdminPackageMutation,
   useUpdateAdminPackageMutation,
   useDeleteAdminPackageMutation,
+  // Admin · Room Types
+  useGetAdminRoomTypesQuery,
+  useCreateAdminRoomTypeMutation,
+  useUpdateAdminRoomTypeMutation,
+  useDeleteAdminRoomTypeMutation,
 } = linktravelApi;
