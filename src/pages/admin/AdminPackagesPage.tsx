@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Card,
@@ -17,14 +17,14 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  fetchAdminPackages,
-  createPackage,
-  updatePackage,
-  deletePackage,
-} from '@/store/slices/adminSlice';
-import { useGetAdminDestinationsQuery, useGetAdminHotelsQuery } from '@/store/linktravelApi';
+  useGetAdminDestinationsQuery,
+  useGetAdminHotelsQuery,
+  useGetAdminPackagesQuery,
+  useCreateAdminPackageMutation,
+  useUpdateAdminPackageMutation,
+  useDeleteAdminPackageMutation,
+} from '@/store/linktravelApi';
 import { LocationPicker } from '@/components/admin/LocationPicker';
 import { ImageGalleryField } from '@/components/admin/ImageGalleryField';
 import { normalizeTagValues, packageIncludeOptions } from '@/lib/adminFieldOptions';
@@ -42,9 +42,6 @@ const packageCategoryOptions = [
 ];
 
 export default function AdminPackagesPage() {
-  const dispatch = useAppDispatch();
-  const { packages, loading } = useAppSelector((s) => s.admin);
-
   // Destinations + Hotels dropdowns via RTK Query (read-only consumers).
   const { data: destinationsData } = useGetAdminDestinationsQuery({ per_page: 100 });
   const destinationItems = useMemo(() => destinationsData?.items ?? [], [destinationsData]);
@@ -59,11 +56,19 @@ export default function AdminPackagesPage() {
   const selectedDestinationId = Form.useWatch('destinationId', form);
   const selectedHotelId = Form.useWatch('hotelId', form);
 
-  const load = useCallback(() => {
-    dispatch(fetchAdminPackages({ search: search || undefined, page, per_page: 15 }));
-  }, [dispatch, search, page]);
+  const { data: packagesData, isFetching } = useGetAdminPackagesQuery({
+    search: search || undefined,
+    page,
+    per_page: 15,
+  });
+  const [createPackage, { isLoading: isCreating }] = useCreateAdminPackageMutation();
+  const [updatePackage, { isLoading: isUpdating }] = useUpdateAdminPackageMutation();
+  const [deletePackage] = useDeleteAdminPackageMutation();
 
-  useEffect(() => { load(); }, [load]);
+  const items = packagesData?.items ?? [];
+  const total = packagesData?.total ?? 0;
+  const currentPage = packagesData?.currentPage ?? page;
+  const perPage = packagesData?.perPage ?? 15;
 
   const destinationOptions = destinationItems.map((destination) => ({
     value: destination.id,
@@ -131,7 +136,7 @@ export default function AdminPackagesPage() {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const data = {
+      const payload = {
         ...values,
         image: values.images?.[0] || '',
         includes: normalizeTagValues(values.includes),
@@ -141,14 +146,14 @@ export default function AdminPackagesPage() {
       };
 
       if (editing) {
-        await dispatch(updatePackage({ id: editing.id, data })).unwrap();
+        await updatePackage({ id: editing.id, data: payload }).unwrap();
         message.success('Package updated');
       } else {
-        await dispatch(createPackage(data)).unwrap();
+        await createPackage(payload).unwrap();
         message.success('Package created');
       }
       setModalOpen(false);
-      load();
+      // Cache invalidation triggers the refetch automatically.
     } catch {
       message.error('Failed to save package');
     }
@@ -156,7 +161,7 @@ export default function AdminPackagesPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deletePackage(id)).unwrap();
+      await deletePackage(id).unwrap();
       message.success('Package deleted');
     } catch {
       message.error('Failed to delete package');
@@ -260,14 +265,14 @@ export default function AdminPackagesPage() {
         }
       >
         <Table
-          dataSource={packages.data}
+          dataSource={items}
           columns={columns}
           rowKey="id"
-          loading={loading.packages}
+          loading={isFetching}
           pagination={{
-            current: packages.page,
-            pageSize: packages.pageSize,
-            total: packages.total,
+            current: currentPage,
+            pageSize: perPage,
+            total: total,
             onChange: (p) => setPage(p),
             showSizeChanger: false,
           }}
@@ -282,6 +287,7 @@ export default function AdminPackagesPage() {
         onOk={handleSubmit}
         width={640}
         okText={editing ? 'Update' : 'Create'}
+        confirmLoading={isCreating || isUpdating}
       >
         <Form form={form} layout="vertical">
           <Alert

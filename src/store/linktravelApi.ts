@@ -11,7 +11,11 @@ import type {
 import type { RootState } from '@/store';
 import { getApiBaseUrl } from '@/api/baseUrl';
 import { resolveMediaUrl, resolveMediaUrls } from '@/lib/media';
-import { serializeDestinationPayload, serializeHotelPayload } from '@/api/serializers';
+import {
+  serializeDestinationPayload,
+  serializeHotelPayload,
+  serializePackagePayload,
+} from '@/api/serializers';
 
 type ApiEnvelope<T> = {
   success: boolean;
@@ -262,6 +266,19 @@ function mapAdminHotel(hotel: Hotel): Hotel {
   };
 }
 
+function mapAdminPackage(pkg: TravelPackage): TravelPackage {
+  return {
+    ...pkg,
+    id: String(pkg.id),
+    destinationId: pkg.destinationId ? String(pkg.destinationId) : pkg.destinationId,
+    hotelId: pkg.hotelId ? String(pkg.hotelId) : pkg.hotelId,
+    image: resolveMediaUrl(pkg.image) ?? pkg.image,
+    images: pkg.images ? resolveMediaUrls(pkg.images) : pkg.images,
+    destination: pkg.destination ? mapAdminDestination(pkg.destination) : undefined,
+    hotel: pkg.hotel ? mapAdminHotel(pkg.hotel) : undefined,
+  };
+}
+
 function mapReservation(reservation: Reservation): Reservation {
   return {
     ...reservation,
@@ -320,6 +337,7 @@ export const linktravelApi = createApi({
     'Reviews',
     'Admin.Destinations',
     'Admin.Hotels',
+    'Admin.Packages',
   ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
@@ -549,6 +567,55 @@ export const linktravelApi = createApi({
         'Hotels',
       ],
     }),
+
+    // ── Admin · Packages ───────────────────────────────────────────────
+    getAdminPackages: builder.query<ListResult<TravelPackage>, AdminListParams | void>({
+      query: (params) => ({ url: '/admin/packages', params: params ?? {} }),
+      transformResponse: (response: ApiEnvelope<TravelPackage[]>) =>
+        mapCollection(response, mapAdminPackage),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'Admin.Packages' as const, id })),
+              { type: 'Admin.Packages' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Admin.Packages' as const, id: 'LIST' }],
+    }),
+    createAdminPackage: builder.mutation<TravelPackage, Partial<TravelPackage>>({
+      query: (data) => ({
+        url: '/admin/packages',
+        method: 'POST',
+        body: serializePackagePayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<TravelPackage>) => mapAdminPackage(response.data),
+      invalidatesTags: [
+        { type: 'Admin.Packages', id: 'LIST' },
+        'Packages',
+      ],
+    }),
+    updateAdminPackage: builder.mutation<TravelPackage, { id: string; data: Partial<TravelPackage> }>({
+      query: ({ id, data }) => ({
+        url: `/admin/packages/${id}`,
+        method: 'PUT',
+        body: serializePackagePayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<TravelPackage>) => mapAdminPackage(response.data),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Admin.Packages', id },
+        { type: 'Admin.Packages', id: 'LIST' },
+        { type: 'Packages', id },
+        'Packages',
+      ],
+    }),
+    deleteAdminPackage: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/packages/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Packages', id },
+        { type: 'Admin.Packages', id: 'LIST' },
+        { type: 'Packages', id },
+        'Packages',
+      ],
+    }),
   }),
 });
 
@@ -584,4 +651,9 @@ export const {
   useCreateAdminHotelMutation,
   useUpdateAdminHotelMutation,
   useDeleteAdminHotelMutation,
+  // Admin · Packages
+  useGetAdminPackagesQuery,
+  useCreateAdminPackageMutation,
+  useUpdateAdminPackageMutation,
+  useDeleteAdminPackageMutation,
 } = linktravelApi;

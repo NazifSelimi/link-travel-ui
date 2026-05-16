@@ -1,13 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '@/api/client';
-import {
-  serializePackagePayload,
-  serializeUserPayload,
-} from '@/api/serializers';
+import { serializeUserPayload } from '@/api/serializers';
 import type {
   DashboardStats,
   AdminReservation,
-  TravelPackage,
   User,
   PaginatedResponse,
   AdminListParams,
@@ -17,12 +13,11 @@ import type {
 } from '@/types';
 
 // ─── State ──────────────────────────────────────────────────
-// NOTE: Destinations and Hotels have been migrated to RTK Query
-// (linktravelApi). Remaining admin resources will follow in
-// subsequent Stage B PRs (Packages → … → Dashboard).
+// NOTE: Destinations, Hotels, and Packages have been migrated to
+// RTK Query (linktravelApi). Remaining admin resources will follow
+// in subsequent Stage B PRs.
 interface AdminState {
   dashboard: DashboardStats | null;
-  packages: { data: TravelPackage[]; total: number; page: number; pageSize: number; totalPages: number };
   reservations: { data: AdminReservation[]; total: number; page: number; pageSize: number; totalPages: number };
   users: { data: User[]; total: number; page: number; pageSize: number; totalPages: number };
   roomTypes: { data: RoomType[]; total: number; page: number; pageSize: number; totalPages: number };
@@ -36,7 +31,6 @@ const emptyPaginated = { data: [], total: 0, page: 1, pageSize: 15, totalPages: 
 
 const initialState: AdminState = {
   dashboard: null,
-  packages: { ...emptyPaginated },
   reservations: { ...emptyPaginated },
   users: { ...emptyPaginated },
   roomTypes: { ...emptyPaginated },
@@ -66,52 +60,6 @@ export const fetchDashboard = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await api.get<DashboardStats>('/admin/dashboard');
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-// ─── Packages CRUD ──────────────────────────────────────────
-export const fetchAdminPackages = createAsyncThunk(
-  'admin/fetchPackages',
-  async (params: AdminListParams | undefined, { rejectWithValue }) => {
-    try {
-      return await api.get<PaginatedResponse<TravelPackage>>(`/admin/packages${buildQuery(params)}`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const createPackage = createAsyncThunk(
-  'admin/createPackage',
-  async (data: Partial<TravelPackage>, { rejectWithValue }) => {
-    try {
-      return await api.post<TravelPackage>('/admin/packages', serializePackagePayload(data));
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const updatePackage = createAsyncThunk(
-  'admin/updatePackage',
-  async ({ id, data }: { id: string; data: Partial<TravelPackage> }, { rejectWithValue }) => {
-    try {
-      return await api.put<TravelPackage>(`/admin/packages/${id}`, serializePackagePayload(data));
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const deletePackage = createAsyncThunk(
-  'admin/deletePackage',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await api.delete(`/admin/packages/${id}`);
-      return id;
     } catch (e) {
       return rejectWithValue((e as Error).message);
     }
@@ -363,24 +311,6 @@ const adminSlice = createSlice({
         setLoading(s, 'dashboard', false);
         s.error = a.payload as string;
       });
-
-    // Packages
-    builder
-      .addCase(fetchAdminPackages.pending, (s) => setLoading(s, 'packages', true))
-      .addCase(fetchAdminPackages.fulfilled, (s, a) => {
-        setLoading(s, 'packages', false);
-        const p = a.payload as PaginatedResponse<TravelPackage>;
-        s.packages = { data: p.data, total: p.total, page: p.page, pageSize: p.pageSize, totalPages: p.totalPages };
-      })
-      .addCase(fetchAdminPackages.rejected, (s, a) => {
-        setLoading(s, 'packages', false);
-        s.error = a.payload as string;
-      });
-
-    builder.addCase(deletePackage.fulfilled, (s, a) => {
-      s.packages.data = s.packages.data.filter((p) => p.id !== a.payload);
-      s.packages.total -= 1;
-    });
 
     // Reservations
     builder
