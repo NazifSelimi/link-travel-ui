@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type {
   AdminReservation,
+  ContactMessage,
   Destination,
   Hotel,
   Reservation,
@@ -267,6 +268,13 @@ function mapAdminHotel(hotel: Hotel): Hotel {
   };
 }
 
+function mapAdminContact(contact: ContactMessage): ContactMessage {
+  return {
+    ...contact,
+    id: String(contact.id),
+  };
+}
+
 function mapAdminReview(review: Review): Review {
   return {
     ...review,
@@ -389,6 +397,7 @@ export const linktravelApi = createApi({
     'Admin.RoomTypes',
     'Admin.Reservations',
     'Admin.Reviews',
+    'Admin.Contacts',
   ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
@@ -792,6 +801,35 @@ export const linktravelApi = createApi({
         'Reviews',
       ],
     }),
+
+    // ── Admin · Contacts ───────────────────────────────────────────────
+    getAdminContacts: builder.query<ListResult<ContactMessage>, AdminListParams | void>({
+      query: (params) => ({ url: '/admin/contacts', params: params ?? {} }),
+      transformResponse: (response: ApiEnvelope<ContactMessage[]>) =>
+        mapCollection(response, mapAdminContact),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'Admin.Contacts' as const, id })),
+              { type: 'Admin.Contacts' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Admin.Contacts' as const, id: 'LIST' }],
+    }),
+    markAdminContactAsRead: builder.mutation<ContactMessage, string>({
+      query: (id) => ({ url: `/admin/contacts/${id}/read`, method: 'PATCH' }),
+      transformResponse: (response: ApiEnvelope<ContactMessage>) => mapAdminContact(response.data),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Contacts', id },
+        { type: 'Admin.Contacts', id: 'LIST' },
+      ],
+    }),
+    deleteAdminContact: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/contacts/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Contacts', id },
+        { type: 'Admin.Contacts', id: 'LIST' },
+      ],
+    }),
   }),
 });
 
@@ -846,4 +884,8 @@ export const {
   useApproveAdminReviewMutation,
   useRejectAdminReviewMutation,
   useDeleteAdminReviewMutation,
+  // Admin · Contacts
+  useGetAdminContactsQuery,
+  useMarkAdminContactAsReadMutation,
+  useDeleteAdminContactMutation,
 } = linktravelApi;

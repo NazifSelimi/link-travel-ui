@@ -6,17 +6,16 @@ import type {
   User,
   PaginatedResponse,
   AdminListParams,
-  ContactMessage,
 } from '@/types';
 
 // ─── State ──────────────────────────────────────────────────
-// NOTE: Destinations, Hotels, Packages, RoomTypes, Reservations, and
-// Reviews have been migrated to RTK Query (linktravelApi). Remaining
-// admin resources will follow in subsequent Stage B PRs.
+// NOTE: Most admin resources (Destinations, Hotels, Packages, RoomTypes,
+// Reservations, Reviews, Contacts) have been migrated to RTK Query
+// (linktravelApi). Users and Dashboard remain on this slice — they
+// migrate in the final Stage B PRs.
 interface AdminState {
   dashboard: DashboardStats | null;
   users: { data: User[]; total: number; page: number; pageSize: number; totalPages: number };
-  contacts: { data: ContactMessage[]; total: number; page: number; pageSize: number; totalPages: number };
   loading: Record<string, boolean>;
   error: string | null;
 }
@@ -26,7 +25,6 @@ const emptyPaginated = { data: [], total: 0, page: 1, pageSize: 15, totalPages: 
 const initialState: AdminState = {
   dashboard: null,
   users: { ...emptyPaginated },
-  contacts: { ...emptyPaginated },
   loading: {},
   error: null,
 };
@@ -93,40 +91,6 @@ export const deleteUser = createAsyncThunk(
 );
 
 
-// ─── Contacts ───────────────────────────────────────────────
-export const fetchAdminContacts = createAsyncThunk(
-  'admin/fetchContacts',
-  async (params: AdminListParams | undefined, { rejectWithValue }) => {
-    try {
-      return await api.get<PaginatedResponse<ContactMessage>>(`/admin/contacts${buildQuery(params)}`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const markContactAsRead = createAsyncThunk(
-  'admin/markContactAsRead',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      return await api.patch<ContactMessage>(`/admin/contacts/${id}/read`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const deleteContact = createAsyncThunk(
-  'admin/deleteContact',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await api.delete(`/admin/contacts/${id}`);
-      return id;
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
 
 // ─── Slice ──────────────────────────────────────────────────
 function setLoading(state: AdminState, key: string, val: boolean) {
@@ -180,29 +144,6 @@ const adminSlice = createSlice({
       });
 
 
-    // Contacts
-    builder
-      .addCase(fetchAdminContacts.pending, (s) => setLoading(s, 'contacts', true))
-      .addCase(fetchAdminContacts.fulfilled, (s, a) => {
-        setLoading(s, 'contacts', false);
-        const p = a.payload as PaginatedResponse<ContactMessage>;
-        s.contacts = { data: p.data, total: p.total, page: p.page, pageSize: p.pageSize, totalPages: p.totalPages };
-      })
-      .addCase(fetchAdminContacts.rejected, (s, a) => {
-        setLoading(s, 'contacts', false);
-        s.error = a.payload as string;
-      });
-
-    builder
-      .addCase(markContactAsRead.fulfilled, (s, a) => {
-        const updated = a.payload as ContactMessage;
-        const idx = s.contacts.data.findIndex((contact) => contact.id === updated.id);
-        if (idx !== -1) s.contacts.data[idx] = updated;
-      })
-      .addCase(deleteContact.fulfilled, (s, a) => {
-        s.contacts.data = s.contacts.data.filter((contact) => contact.id !== a.payload);
-        s.contacts.total -= 1;
-      });
   },
 });
 

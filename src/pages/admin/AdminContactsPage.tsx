@@ -1,32 +1,40 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Button, Card, Input, message, Modal, Popconfirm, Space, Table, Tag, Typography } from 'antd';
 import { DeleteOutlined, EyeOutlined, MailOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { deleteContact, fetchAdminContacts, markContactAsRead } from '@/store/slices/adminSlice';
+import {
+  useDeleteAdminContactMutation,
+  useGetAdminContactsQuery,
+  useMarkAdminContactAsReadMutation,
+} from '@/store/linktravelApi';
 import type { ContactMessage } from '@/types';
 
 const { Paragraph, Text } = Typography;
 
 export default function AdminContactsPage() {
-  const dispatch = useAppDispatch();
-  const { contacts, loading } = useAppSelector((state) => state.admin);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ContactMessage | null>(null);
 
-  const load = useCallback(() => {
-    dispatch(fetchAdminContacts({ search: search || undefined, page, per_page: 15 }));
-  }, [dispatch, search, page]);
+  const { data, isFetching } = useGetAdminContactsQuery({
+    search: search || undefined,
+    page,
+    per_page: 15,
+  });
+  const [markContactAsRead] = useMarkAdminContactAsReadMutation();
+  const [deleteContact] = useDeleteAdminContactMutation();
 
-  useEffect(() => { load(); }, [load]);
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const currentPage = data?.currentPage ?? page;
+  const perPage = data?.perPage ?? 15;
 
   const openContact = async (contact: ContactMessage) => {
     setSelected(contact);
 
     if (!contact.read) {
       try {
-        await dispatch(markContactAsRead(contact.id)).unwrap();
+        await markContactAsRead(contact.id).unwrap();
       } catch {
         message.error('Failed to mark contact as read');
       }
@@ -35,7 +43,7 @@ export default function AdminContactsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deleteContact(id)).unwrap();
+      await deleteContact(id).unwrap();
       message.success('Contact deleted');
     } catch {
       message.error('Failed to delete contact');
@@ -103,13 +111,13 @@ export default function AdminContactsPage() {
       >
         <Table
           rowKey="id"
-          dataSource={contacts.data}
+          dataSource={items}
           columns={columns}
-          loading={loading.contacts}
+          loading={isFetching}
           pagination={{
-            current: contacts.page,
-            pageSize: contacts.pageSize,
-            total: contacts.total,
+            current: currentPage,
+            pageSize: perPage,
+            total: total,
             onChange: (nextPage) => setPage(nextPage),
             showSizeChanger: false,
           }}
