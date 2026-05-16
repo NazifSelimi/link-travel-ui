@@ -38,32 +38,20 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    if (error.response) {
-      const status = error.response.status;
-      switch (status) {
-        case 401:
-          localStorage.removeItem('auth_token');
-          break;
-        case 403:
-          console.error('Access forbidden');
-          break;
-        case 404:
-          console.error('Resource not found');
-          break;
-        case 422:
-          console.error('Validation error:', error.response.data);
-          break;
-        case 500:
-          console.error('Server error');
-          break;
-        default:
-          console.error('API error:', error.response.data);
-      }
-    } else if (error.request) {
-      console.error('Network error - no response received');
-    } else {
-      console.error('Error setting up request:', error.message);
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('auth_token');
     }
+
+    if (import.meta.env.DEV) {
+      if (error.response) {
+        console.error(`API error (${error.response.status}):`, error.response.data);
+      } else if (error.request) {
+        console.error('Network error - no response received');
+      } else {
+        console.error('Error setting up request:', error.message);
+      }
+    }
+
     return Promise.reject(new Error(extractErrorMessage(error)));
   }
 );
