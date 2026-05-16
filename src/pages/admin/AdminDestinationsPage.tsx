@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Card,
   Table,
@@ -17,13 +17,12 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  fetchAdminDestinations,
-  createDestination,
-  updateDestination,
-  deleteDestination,
-} from '@/store/slices/adminSlice';
+  useGetAdminDestinationsQuery,
+  useCreateAdminDestinationMutation,
+  useUpdateAdminDestinationMutation,
+  useDeleteAdminDestinationMutation,
+} from '@/store/linktravelApi';
 import { CitySelect } from '@/components/admin/CitySelect';
 import { ImageGalleryField } from '@/components/admin/ImageGalleryField';
 import { LocationPicker } from '@/components/admin/LocationPicker';
@@ -50,8 +49,6 @@ const selectPopupStyles = {
 } as const;
 
 export default function AdminDestinationsPage() {
-  const dispatch = useAppDispatch();
-  const { destinations, loading } = useAppSelector((s) => s.admin);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
@@ -61,11 +58,19 @@ export default function AdminDestinationsPage() {
   const selectedCountryCode = Form.useWatch('countryCode', form);
   const galleryImages = Form.useWatch('images', form) ?? [];
 
-  const load = useCallback(() => {
-    dispatch(fetchAdminDestinations({ search: search || undefined, page, per_page: 15 }));
-  }, [dispatch, search, page]);
+  const { data, isFetching } = useGetAdminDestinationsQuery({
+    search: search || undefined,
+    page,
+    per_page: 15,
+  });
+  const [createDestination, { isLoading: isCreating }] = useCreateAdminDestinationMutation();
+  const [updateDestination, { isLoading: isUpdating }] = useUpdateAdminDestinationMutation();
+  const [deleteDestination] = useDeleteAdminDestinationMutation();
 
-  useEffect(() => { load(); }, [load]);
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const currentPage = data?.currentPage ?? page;
+  const perPage = data?.perPage ?? 15;
 
   const handleSearch = (val: string) => {
     setSearch(val);
@@ -178,7 +183,7 @@ export default function AdminDestinationsPage() {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const data = {
+      const payload = {
         ...values,
         image: values.images?.[0] || '',
         tags: values.tags ?? [],
@@ -186,14 +191,14 @@ export default function AdminDestinationsPage() {
       };
 
       if (editing) {
-        await dispatch(updateDestination({ id: editing.id, data })).unwrap();
+        await updateDestination({ id: editing.id, data: payload }).unwrap();
         message.success('Destination updated');
       } else {
-        await dispatch(createDestination(data)).unwrap();
+        await createDestination(payload).unwrap();
         message.success('Destination created');
       }
       setModalOpen(false);
-      load();
+      // Cache invalidation triggers the refetch automatically.
     } catch {
       message.error('Failed to save destination');
     }
@@ -201,7 +206,7 @@ export default function AdminDestinationsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deleteDestination(id)).unwrap();
+      await deleteDestination(id).unwrap();
       message.success('Destination deleted');
     } catch {
       message.error('Failed to delete destination');
@@ -312,14 +317,14 @@ export default function AdminDestinationsPage() {
         }
       >
         <Table
-          dataSource={destinations.data}
+          dataSource={items}
           columns={columns}
           rowKey="id"
-          loading={loading.destinations}
+          loading={isFetching}
           pagination={{
-            current: destinations.page,
-            pageSize: destinations.pageSize,
-            total: destinations.total,
+            current: currentPage,
+            pageSize: perPage,
+            total: total,
             onChange: (p) => setPage(p),
             showSizeChanger: false,
           }}
@@ -334,6 +339,7 @@ export default function AdminDestinationsPage() {
         onOk={handleSubmit}
         width={640}
         okText={editing ? 'Update' : 'Create'}
+        confirmLoading={isCreating || isUpdating}
       >
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>

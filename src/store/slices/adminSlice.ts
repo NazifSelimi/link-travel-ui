@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '@/api/client';
 import {
-  serializeDestinationPayload,
   serializeHotelPayload,
   serializePackagePayload,
   serializeUserPayload,
@@ -9,7 +8,6 @@ import {
 import type {
   DashboardStats,
   AdminReservation,
-  Destination,
   Hotel,
   TravelPackage,
   User,
@@ -21,9 +19,11 @@ import type {
 } from '@/types';
 
 // ─── State ──────────────────────────────────────────────────
+// NOTE: Destinations have been migrated to RTK Query (linktravelApi).
+// Other admin resources are still served by this slice and will follow
+// in subsequent Stage B PRs (Hotels → Packages → … → Dashboard).
 interface AdminState {
   dashboard: DashboardStats | null;
-  destinations: { data: Destination[]; total: number; page: number; pageSize: number; totalPages: number };
   hotels: { data: Hotel[]; total: number; page: number; pageSize: number; totalPages: number };
   packages: { data: TravelPackage[]; total: number; page: number; pageSize: number; totalPages: number };
   reservations: { data: AdminReservation[]; total: number; page: number; pageSize: number; totalPages: number };
@@ -39,7 +39,6 @@ const emptyPaginated = { data: [], total: 0, page: 1, pageSize: 15, totalPages: 
 
 const initialState: AdminState = {
   dashboard: null,
-  destinations: { ...emptyPaginated },
   hotels: { ...emptyPaginated },
   packages: { ...emptyPaginated },
   reservations: { ...emptyPaginated },
@@ -71,52 +70,6 @@ export const fetchDashboard = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await api.get<DashboardStats>('/admin/dashboard');
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-// ─── Destinations CRUD ──────────────────────────────────────
-export const fetchAdminDestinations = createAsyncThunk(
-  'admin/fetchDestinations',
-  async (params: AdminListParams | undefined, { rejectWithValue }) => {
-    try {
-      return await api.get<PaginatedResponse<Destination>>(`/admin/destinations${buildQuery(params)}`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const createDestination = createAsyncThunk(
-  'admin/createDestination',
-  async (data: Partial<Destination>, { rejectWithValue }) => {
-    try {
-      return await api.post<Destination>('/admin/destinations', serializeDestinationPayload(data));
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const updateDestination = createAsyncThunk(
-  'admin/updateDestination',
-  async ({ id, data }: { id: string; data: Partial<Destination> }, { rejectWithValue }) => {
-    try {
-      return await api.put<Destination>(`/admin/destinations/${id}`, serializeDestinationPayload(data));
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const deleteDestination = createAsyncThunk(
-  'admin/deleteDestination',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await api.delete(`/admin/destinations/${id}`);
-      return id;
     } catch (e) {
       return rejectWithValue((e as Error).message);
     }
@@ -459,25 +412,6 @@ const adminSlice = createSlice({
       .addCase(fetchDashboard.rejected, (s, a) => {
         setLoading(s, 'dashboard', false);
         s.error = a.payload as string;
-      });
-
-    // Destinations
-    builder
-      .addCase(fetchAdminDestinations.pending, (s) => setLoading(s, 'destinations', true))
-      .addCase(fetchAdminDestinations.fulfilled, (s, a) => {
-        setLoading(s, 'destinations', false);
-        const p = a.payload as PaginatedResponse<Destination>;
-        s.destinations = { data: p.data, total: p.total, page: p.page, pageSize: p.pageSize, totalPages: p.totalPages };
-      })
-      .addCase(fetchAdminDestinations.rejected, (s, a) => {
-        setLoading(s, 'destinations', false);
-        s.error = a.payload as string;
-      });
-
-    builder
-      .addCase(deleteDestination.fulfilled, (s, a) => {
-        s.destinations.data = s.destinations.data.filter((d) => d.id !== a.payload);
-        s.destinations.total -= 1;
       });
 
     // Hotels

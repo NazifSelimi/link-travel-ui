@@ -11,6 +11,7 @@ import type {
 import type { RootState } from '@/store';
 import { getApiBaseUrl } from '@/api/baseUrl';
 import { resolveMediaUrl, resolveMediaUrls } from '@/lib/media';
+import { serializeDestinationPayload } from '@/api/serializers';
 
 type ApiEnvelope<T> = {
   success: boolean;
@@ -70,6 +71,15 @@ type BookingPayload = {
   guests: number;
   totalPrice: number;
   notes?: string;
+};
+
+export type AdminListParams = {
+  search?: string;
+  page?: number;
+  per_page?: number;
+  status?: string;
+  role?: string;
+  hotel_id?: string;
 };
 
 const defaultImage = '/placeholder.svg';
@@ -229,6 +239,18 @@ function mapPackage(pkg: TravelPackage): TravelPackage {
   };
 }
 
+// Admin mappers: minimal normalization (stringify id, resolve media URLs).
+// Unlike the public mappers, these do NOT inject UI defaults — the admin must
+// see the real stored state, including missing/empty fields.
+function mapAdminDestination(destination: Destination): Destination {
+  return {
+    ...destination,
+    id: String(destination.id),
+    image: resolveMediaUrl(destination.image) ?? destination.image,
+    images: resolveMediaUrls(destination.images),
+  };
+}
+
 function mapReservation(reservation: Reservation): Reservation {
   return {
     ...reservation,
@@ -278,7 +300,15 @@ const baseQuery = fetchBaseQuery({
 export const linktravelApi = createApi({
   reducerPath: 'linktravelApi',
   baseQuery,
-  tagTypes: ['User', 'Destinations', 'Hotels', 'Packages', 'Reservations', 'Reviews'],
+  tagTypes: [
+    'User',
+    'Destinations',
+    'Hotels',
+    'Packages',
+    'Reservations',
+    'Reviews',
+    'Admin.Destinations',
+  ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
       query: (params) => ({ url: '/destinations', params: params ?? {} }),
@@ -409,6 +439,55 @@ export const linktravelApi = createApi({
         body: { email },
       }),
     }),
+
+    // ── Admin · Destinations ───────────────────────────────────────────
+    getAdminDestinations: builder.query<ListResult<Destination>, AdminListParams | void>({
+      query: (params) => ({ url: '/admin/destinations', params: params ?? {} }),
+      transformResponse: (response: ApiEnvelope<Destination[]>) =>
+        mapCollection(response, mapAdminDestination),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'Admin.Destinations' as const, id })),
+              { type: 'Admin.Destinations' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Admin.Destinations' as const, id: 'LIST' }],
+    }),
+    createAdminDestination: builder.mutation<Destination, Partial<Destination>>({
+      query: (data) => ({
+        url: '/admin/destinations',
+        method: 'POST',
+        body: serializeDestinationPayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<Destination>) => mapAdminDestination(response.data),
+      invalidatesTags: [
+        { type: 'Admin.Destinations', id: 'LIST' },
+        'Destinations',
+      ],
+    }),
+    updateAdminDestination: builder.mutation<Destination, { id: string; data: Partial<Destination> }>({
+      query: ({ id, data }) => ({
+        url: `/admin/destinations/${id}`,
+        method: 'PUT',
+        body: serializeDestinationPayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<Destination>) => mapAdminDestination(response.data),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Admin.Destinations', id },
+        { type: 'Admin.Destinations', id: 'LIST' },
+        { type: 'Destinations', id },
+        'Destinations',
+      ],
+    }),
+    deleteAdminDestination: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/destinations/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Destinations', id },
+        { type: 'Admin.Destinations', id: 'LIST' },
+        { type: 'Destinations', id },
+        'Destinations',
+      ],
+    }),
   }),
 });
 
@@ -434,4 +513,9 @@ export const {
   useGetBookingQuery,
   useSendContactMutation,
   useSubscribeNewsletterMutation,
+  // Admin · Destinations
+  useGetAdminDestinationsQuery,
+  useCreateAdminDestinationMutation,
+  useUpdateAdminDestinationMutation,
+  useDeleteAdminDestinationMutation,
 } = linktravelApi;

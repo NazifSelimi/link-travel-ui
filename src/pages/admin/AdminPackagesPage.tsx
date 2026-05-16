@@ -20,12 +20,12 @@ import type { ColumnsType } from 'antd/es/table';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   fetchAdminPackages,
-  fetchAdminDestinations,
   fetchAdminHotels,
   createPackage,
   updatePackage,
   deletePackage,
 } from '@/store/slices/adminSlice';
+import { useGetAdminDestinationsQuery } from '@/store/linktravelApi';
 import { LocationPicker } from '@/components/admin/LocationPicker';
 import { ImageGalleryField } from '@/components/admin/ImageGalleryField';
 import { normalizeTagValues, packageIncludeOptions } from '@/lib/adminFieldOptions';
@@ -44,7 +44,11 @@ const packageCategoryOptions = [
 
 export default function AdminPackagesPage() {
   const dispatch = useAppDispatch();
-  const { packages, destinations, hotels, loading } = useAppSelector((s) => s.admin);
+  const { packages, hotels, loading } = useAppSelector((s) => s.admin);
+
+  // Destinations dropdown via RTK Query (read-only consumer of the admin list).
+  const { data: destinationsData } = useGetAdminDestinationsQuery({ per_page: 100 });
+  const destinationItems = destinationsData?.items ?? [];
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
@@ -61,18 +65,12 @@ export default function AdminPackagesPage() {
   useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
-    if (destinations.data.length === 0) {
-      dispatch(fetchAdminDestinations({ per_page: 100 }));
-    }
-  }, [dispatch, destinations.data.length]);
-
-  useEffect(() => {
     if (hotels.data.length === 0) {
       dispatch(fetchAdminHotels({ per_page: 200 }));
     }
   }, [dispatch, hotels.data.length]);
 
-  const destinationOptions = destinations.data.map((destination) => ({
+  const destinationOptions = destinationItems.map((destination) => ({
     value: destination.id,
     label: `${destination.name}, ${destination.country}`,
   }));

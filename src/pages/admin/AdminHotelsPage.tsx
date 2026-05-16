@@ -20,11 +20,11 @@ import type { ColumnsType } from 'antd/es/table';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   fetchAdminHotels,
-  fetchAdminDestinations,
   createHotel,
   updateHotel,
   deleteHotel,
 } from '@/store/slices/adminSlice';
+import { useGetAdminDestinationsQuery } from '@/store/linktravelApi';
 import { CitySelect } from '@/components/admin/CitySelect';
 import { ImageGalleryField } from '@/components/admin/ImageGalleryField';
 import { LocationPicker } from '@/components/admin/LocationPicker';
@@ -36,7 +36,7 @@ const { TextArea } = Input;
 
 export default function AdminHotelsPage() {
   const dispatch = useAppDispatch();
-  const { hotels, destinations, loading } = useAppSelector((s) => s.admin);
+  const { hotels, loading } = useAppSelector((s) => s.admin);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
@@ -44,7 +44,11 @@ export default function AdminHotelsPage() {
   const [form] = Form.useForm();
   const selectedCountryCode = Form.useWatch('countryCode', form);
   const galleryImages = Form.useWatch('images', form) ?? [];
-  const destinationOptions = destinations.data.map((destination) => ({
+
+  // Destinations dropdown via RTK Query (read-only consumer of the admin list).
+  const { data: destinationsData } = useGetAdminDestinationsQuery({ per_page: 100 });
+  const destinationItems = destinationsData?.items ?? [];
+  const destinationOptions = destinationItems.map((destination) => ({
     value: destination.id,
     label: `${destination.name}, ${destination.country}`,
   }));
@@ -54,13 +58,6 @@ export default function AdminHotelsPage() {
   }, [dispatch, search, page]);
 
   useEffect(() => { load(); }, [load]);
-
-  // Load destinations for the dropdown
-  useEffect(() => {
-    if (destinations.data.length === 0) {
-      dispatch(fetchAdminDestinations({ per_page: 100 }));
-    }
-  }, [dispatch, destinations.data.length]);
 
   const handleSearch = (val: string) => {
     setSearch(val);
@@ -81,7 +78,7 @@ export default function AdminHotelsPage() {
   };
 
   const handleDestinationChange = (destinationId: string) => {
-    const destination = destinations.data.find((item) => item.id === destinationId);
+    const destination = destinationItems.find((item) => item.id === destinationId);
 
     if (!destination) {
       form.setFieldValue('destinationId', destinationId);
