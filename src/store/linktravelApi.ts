@@ -379,7 +379,9 @@ function mapCollection<TInput, TOutput>(
 
 const baseQuery = fetchBaseQuery({
   baseUrl: getApiBaseUrl(),
-  credentials: 'include',
+  // No credentials: 'include'. Auth is bearer-token only (see prepareHeaders
+  // below); sending session cookies would re-trigger Sanctum's stateful-API
+  // CSRF path and break login.
   prepareHeaders: (headers, { getState }) => {
     const state = getState() as RootState;
     const token = state.auth.token || localStorage.getItem('auth_token');
