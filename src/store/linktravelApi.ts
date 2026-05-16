@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type {
+  AdminReservation,
   Destination,
   Hotel,
   Reservation,
@@ -266,6 +267,19 @@ function mapAdminHotel(hotel: Hotel): Hotel {
   };
 }
 
+function mapAdminReservation(reservation: AdminReservation): AdminReservation {
+  return {
+    ...reservation,
+    id: String(reservation.id),
+    userId: reservation.userId ? String(reservation.userId) : reservation.userId,
+    hotelId: reservation.hotelId ? String(reservation.hotelId) : reservation.hotelId,
+    roomTypeId: reservation.roomTypeId ? String(reservation.roomTypeId) : reservation.roomTypeId,
+    packageId: reservation.packageId ? String(reservation.packageId) : reservation.packageId,
+    hotel: reservation.hotel ? mapAdminHotel(reservation.hotel) : undefined,
+    package: reservation.package ? mapAdminPackage(reservation.package) : undefined,
+  };
+}
+
 function mapAdminRoomType(roomType: RoomType): RoomType {
   return {
     ...roomType,
@@ -363,6 +377,7 @@ export const linktravelApi = createApi({
     'Admin.Hotels',
     'Admin.Packages',
     'Admin.RoomTypes',
+    'Admin.Reservations',
   ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
@@ -689,6 +704,42 @@ export const linktravelApi = createApi({
         'Hotels',
       ],
     }),
+
+    // ── Admin · Reservations ───────────────────────────────────────────
+    getAdminReservations: builder.query<ListResult<AdminReservation>, AdminListParams | void>({
+      query: (params) => ({ url: '/admin/reservations', params: params ?? {} }),
+      transformResponse: (response: ApiEnvelope<AdminReservation[]>) =>
+        mapCollection(response, mapAdminReservation),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'Admin.Reservations' as const, id })),
+              { type: 'Admin.Reservations' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Admin.Reservations' as const, id: 'LIST' }],
+    }),
+    updateAdminReservationStatus: builder.mutation<AdminReservation, { id: string; status: number }>({
+      query: ({ id, status }) => ({
+        url: `/admin/reservations/${id}/status`,
+        method: 'PATCH',
+        body: { status },
+      }),
+      transformResponse: (response: ApiEnvelope<AdminReservation>) => mapAdminReservation(response.data),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Admin.Reservations', id },
+        { type: 'Admin.Reservations', id: 'LIST' },
+        // Customer-facing 'Reservations' cache (My Reservations page, when added).
+        { type: 'Reservations', id },
+      ],
+    }),
+    deleteAdminReservation: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/reservations/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Reservations', id },
+        { type: 'Admin.Reservations', id: 'LIST' },
+        { type: 'Reservations', id },
+      ],
+    }),
   }),
 });
 
@@ -734,4 +785,8 @@ export const {
   useCreateAdminRoomTypeMutation,
   useUpdateAdminRoomTypeMutation,
   useDeleteAdminRoomTypeMutation,
+  // Admin · Reservations
+  useGetAdminReservationsQuery,
+  useUpdateAdminReservationStatusMutation,
+  useDeleteAdminReservationMutation,
 } = linktravelApi;

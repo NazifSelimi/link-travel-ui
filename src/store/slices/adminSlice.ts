@@ -3,7 +3,6 @@ import { api } from '@/api/client';
 import { serializeUserPayload } from '@/api/serializers';
 import type {
   DashboardStats,
-  AdminReservation,
   User,
   PaginatedResponse,
   AdminListParams,
@@ -12,12 +11,11 @@ import type {
 } from '@/types';
 
 // ─── State ──────────────────────────────────────────────────
-// NOTE: Destinations, Hotels, Packages, and RoomTypes have been
-// migrated to RTK Query (linktravelApi). Remaining admin resources
-// will follow in subsequent Stage B PRs.
+// NOTE: Destinations, Hotels, Packages, RoomTypes, and Reservations
+// have been migrated to RTK Query (linktravelApi). Remaining admin
+// resources will follow in subsequent Stage B PRs.
 interface AdminState {
   dashboard: DashboardStats | null;
-  reservations: { data: AdminReservation[]; total: number; page: number; pageSize: number; totalPages: number };
   users: { data: User[]; total: number; page: number; pageSize: number; totalPages: number };
   reviews: { data: Review[]; total: number; page: number; pageSize: number; totalPages: number };
   contacts: { data: ContactMessage[]; total: number; page: number; pageSize: number; totalPages: number };
@@ -29,7 +27,6 @@ const emptyPaginated = { data: [], total: 0, page: 1, pageSize: 15, totalPages: 
 
 const initialState: AdminState = {
   dashboard: null,
-  reservations: { ...emptyPaginated },
   users: { ...emptyPaginated },
   reviews: { ...emptyPaginated },
   contacts: { ...emptyPaginated },
@@ -57,41 +54,6 @@ export const fetchDashboard = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await api.get<DashboardStats>('/admin/dashboard');
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-// ─── Reservations ───────────────────────────────────────────
-export const fetchAdminReservations = createAsyncThunk(
-  'admin/fetchReservations',
-  async (params: AdminListParams | undefined, { rejectWithValue }) => {
-    try {
-      return await api.get<PaginatedResponse<AdminReservation>>(`/admin/reservations${buildQuery(params)}`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const updateReservationStatus = createAsyncThunk(
-  'admin/updateReservationStatus',
-  async ({ id, status }: { id: string; status: number }, { rejectWithValue }) => {
-    try {
-      return await api.patch<AdminReservation>(`/admin/reservations/${id}/status`, { status });
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const deleteReservation = createAsyncThunk(
-  'admin/deleteReservation',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await api.delete(`/admin/reservations/${id}`);
-      return id;
     } catch (e) {
       return rejectWithValue((e as Error).message);
     }
@@ -239,30 +201,6 @@ const adminSlice = createSlice({
       .addCase(fetchDashboard.rejected, (s, a) => {
         setLoading(s, 'dashboard', false);
         s.error = a.payload as string;
-      });
-
-    // Reservations
-    builder
-      .addCase(fetchAdminReservations.pending, (s) => setLoading(s, 'reservations', true))
-      .addCase(fetchAdminReservations.fulfilled, (s, a) => {
-        setLoading(s, 'reservations', false);
-        const p = a.payload as PaginatedResponse<AdminReservation>;
-        s.reservations = { data: p.data, total: p.total, page: p.page, pageSize: p.pageSize, totalPages: p.totalPages };
-      })
-      .addCase(fetchAdminReservations.rejected, (s, a) => {
-        setLoading(s, 'reservations', false);
-        s.error = a.payload as string;
-      });
-
-    builder
-      .addCase(updateReservationStatus.fulfilled, (s, a) => {
-        const updated = a.payload as AdminReservation;
-        const idx = s.reservations.data.findIndex((r) => r.id === updated.id);
-        if (idx !== -1) s.reservations.data[idx] = updated;
-      })
-      .addCase(deleteReservation.fulfilled, (s, a) => {
-        s.reservations.data = s.reservations.data.filter((r) => r.id !== a.payload);
-        s.reservations.total -= 1;
       });
 
     // Users

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Card,
   Table,
@@ -14,12 +14,11 @@ import {
 } from 'antd';
 import { SearchOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  fetchAdminReservations,
-  updateReservationStatus,
-  deleteReservation,
-} from '@/store/slices/adminSlice';
+  useGetAdminReservationsQuery,
+  useUpdateAdminReservationStatusMutation,
+  useDeleteAdminReservationMutation,
+} from '@/store/linktravelApi';
 import type { AdminReservation } from '@/types';
 
 const statusMap: Record<string, { label: string; color: string; value: number }> = {
@@ -35,26 +34,25 @@ const statusOptions = Object.entries(statusMap).map(([key, v]) => ({
 }));
 
 export default function AdminReservationsPage() {
-  const dispatch = useAppDispatch();
-  const { reservations, loading } = useAppSelector((s) => s.admin);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
   const [page, setPage] = useState(1);
   const [detailOpen, setDetailOpen] = useState(false);
   const [selected, setSelected] = useState<AdminReservation | null>(null);
 
-  const load = useCallback(() => {
-    dispatch(
-      fetchAdminReservations({
-        search: search || undefined,
-        status: statusFilter,
-        page,
-        per_page: 15,
-      }),
-    );
-  }, [dispatch, search, statusFilter, page]);
+  const { data, isFetching } = useGetAdminReservationsQuery({
+    search: search || undefined,
+    status: statusFilter,
+    page,
+    per_page: 15,
+  });
+  const [updateReservationStatus] = useUpdateAdminReservationStatusMutation();
+  const [deleteReservation] = useDeleteAdminReservationMutation();
 
-  useEffect(() => { load(); }, [load]);
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const currentPage = data?.currentPage ?? page;
+  const perPage = data?.perPage ?? 15;
 
   const handleSearch = (val: string) => {
     setSearch(val);
@@ -63,9 +61,8 @@ export default function AdminReservationsPage() {
 
   const handleStatusChange = async (id: string, statusValue: number) => {
     try {
-      await dispatch(updateReservationStatus({ id, status: statusValue })).unwrap();
+      await updateReservationStatus({ id, status: statusValue }).unwrap();
       message.success('Status updated');
-      load();
     } catch {
       message.error('Failed to update status');
     }
@@ -73,7 +70,7 @@ export default function AdminReservationsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deleteReservation(id)).unwrap();
+      await deleteReservation(id).unwrap();
       message.success('Reservation deleted');
     } catch {
       message.error('Failed to delete reservation');
@@ -186,14 +183,14 @@ export default function AdminReservationsPage() {
         }
       >
         <Table
-          dataSource={reservations.data}
+          dataSource={items}
           columns={columns}
           rowKey="id"
-          loading={loading.reservations}
+          loading={isFetching}
           pagination={{
-            current: reservations.page,
-            pageSize: reservations.pageSize,
-            total: reservations.total,
+            current: currentPage,
+            pageSize: perPage,
+            total: total,
             onChange: (p) => setPage(p),
             showSizeChanger: false,
           }}
