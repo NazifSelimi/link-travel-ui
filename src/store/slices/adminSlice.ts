@@ -6,18 +6,16 @@ import type {
   User,
   PaginatedResponse,
   AdminListParams,
-  Review,
   ContactMessage,
 } from '@/types';
 
 // ─── State ──────────────────────────────────────────────────
-// NOTE: Destinations, Hotels, Packages, RoomTypes, and Reservations
-// have been migrated to RTK Query (linktravelApi). Remaining admin
-// resources will follow in subsequent Stage B PRs.
+// NOTE: Destinations, Hotels, Packages, RoomTypes, Reservations, and
+// Reviews have been migrated to RTK Query (linktravelApi). Remaining
+// admin resources will follow in subsequent Stage B PRs.
 interface AdminState {
   dashboard: DashboardStats | null;
   users: { data: User[]; total: number; page: number; pageSize: number; totalPages: number };
-  reviews: { data: Review[]; total: number; page: number; pageSize: number; totalPages: number };
   contacts: { data: ContactMessage[]; total: number; page: number; pageSize: number; totalPages: number };
   loading: Record<string, boolean>;
   error: string | null;
@@ -28,7 +26,6 @@ const emptyPaginated = { data: [], total: 0, page: 1, pageSize: 15, totalPages: 
 const initialState: AdminState = {
   dashboard: null,
   users: { ...emptyPaginated },
-  reviews: { ...emptyPaginated },
   contacts: { ...emptyPaginated },
   loading: {},
   error: null,
@@ -95,51 +92,6 @@ export const deleteUser = createAsyncThunk(
   },
 );
 
-// ─── Reviews ────────────────────────────────────────────────
-export const fetchAdminReviews = createAsyncThunk(
-  'admin/fetchReviews',
-  async (params: AdminListParams | undefined, { rejectWithValue }) => {
-    try {
-      return await api.get<PaginatedResponse<Review>>(`/admin/reviews${buildQuery(params)}`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const approveReview = createAsyncThunk(
-  'admin/approveReview',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      return await api.patch<Review>(`/admin/reviews/${id}/approve`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const rejectReview = createAsyncThunk(
-  'admin/rejectReview',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      return await api.patch<Review>(`/admin/reviews/${id}/reject`);
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
-
-export const deleteReview = createAsyncThunk(
-  'admin/deleteReview',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await api.delete(`/admin/reviews/${id}`);
-      return id;
-    } catch (e) {
-      return rejectWithValue((e as Error).message);
-    }
-  },
-);
 
 // ─── Contacts ───────────────────────────────────────────────
 export const fetchAdminContacts = createAsyncThunk(
@@ -227,34 +179,6 @@ const adminSlice = createSlice({
         s.users.total -= 1;
       });
 
-    // Reviews
-    builder
-      .addCase(fetchAdminReviews.pending, (s) => setLoading(s, 'reviews', true))
-      .addCase(fetchAdminReviews.fulfilled, (s, a) => {
-        setLoading(s, 'reviews', false);
-        const p = a.payload as PaginatedResponse<Review>;
-        s.reviews = { data: p.data, total: p.total, page: p.page, pageSize: p.pageSize, totalPages: p.totalPages };
-      })
-      .addCase(fetchAdminReviews.rejected, (s, a) => {
-        setLoading(s, 'reviews', false);
-        s.error = a.payload as string;
-      });
-
-    builder
-      .addCase(approveReview.fulfilled, (s, a) => {
-        const updated = a.payload as Review;
-        const idx = s.reviews.data.findIndex((review) => review.id === updated.id);
-        if (idx !== -1) s.reviews.data[idx] = updated;
-      })
-      .addCase(rejectReview.fulfilled, (s, a) => {
-        const updated = a.payload as Review;
-        const idx = s.reviews.data.findIndex((review) => review.id === updated.id);
-        if (idx !== -1) s.reviews.data[idx] = updated;
-      })
-      .addCase(deleteReview.fulfilled, (s, a) => {
-        s.reviews.data = s.reviews.data.filter((review) => review.id !== a.payload);
-        s.reviews.total -= 1;
-      });
 
     // Contacts
     builder

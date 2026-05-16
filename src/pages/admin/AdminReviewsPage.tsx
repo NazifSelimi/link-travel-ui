@@ -1,26 +1,36 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Button, Card, Input, message, Popconfirm, Space, Table, Tag } from 'antd';
 import { CheckOutlined, CloseOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { approveReview, deleteReview, fetchAdminReviews, rejectReview } from '@/store/slices/adminSlice';
+import {
+  useApproveAdminReviewMutation,
+  useDeleteAdminReviewMutation,
+  useGetAdminReviewsQuery,
+  useRejectAdminReviewMutation,
+} from '@/store/linktravelApi';
 import type { Review } from '@/types';
 
 export default function AdminReviewsPage() {
-  const dispatch = useAppDispatch();
-  const { reviews, loading } = useAppSelector((state) => state.admin);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  const load = useCallback(() => {
-    dispatch(fetchAdminReviews({ search: search || undefined, page, per_page: 15 }));
-  }, [dispatch, search, page]);
+  const { data, isFetching } = useGetAdminReviewsQuery({
+    search: search || undefined,
+    page,
+    per_page: 15,
+  });
+  const [approveReview] = useApproveAdminReviewMutation();
+  const [rejectReview] = useRejectAdminReviewMutation();
+  const [deleteReview] = useDeleteAdminReviewMutation();
 
-  useEffect(() => { load(); }, [load]);
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const currentPage = data?.currentPage ?? page;
+  const perPage = data?.perPage ?? 15;
 
   const handleApprove = async (id: string) => {
     try {
-      await dispatch(approveReview(id)).unwrap();
+      await approveReview(id).unwrap();
       message.success('Review approved');
     } catch {
       message.error('Failed to approve review');
@@ -29,7 +39,7 @@ export default function AdminReviewsPage() {
 
   const handleReject = async (id: string) => {
     try {
-      await dispatch(rejectReview(id)).unwrap();
+      await rejectReview(id).unwrap();
       message.success('Review rejected');
     } catch {
       message.error('Failed to reject review');
@@ -38,7 +48,7 @@ export default function AdminReviewsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deleteReview(id)).unwrap();
+      await deleteReview(id).unwrap();
       message.success('Review deleted');
     } catch {
       message.error('Failed to delete review');
@@ -119,13 +129,13 @@ export default function AdminReviewsPage() {
     >
       <Table
         rowKey="id"
-        dataSource={reviews.data}
+        dataSource={items}
         columns={columns}
-        loading={loading.reviews}
+        loading={isFetching}
         pagination={{
-          current: reviews.page,
-          pageSize: reviews.pageSize,
-          total: reviews.total,
+          current: currentPage,
+          pageSize: perPage,
+          total: total,
           onChange: (nextPage) => setPage(nextPage),
           showSizeChanger: false,
         }}

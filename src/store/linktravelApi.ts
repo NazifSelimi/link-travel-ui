@@ -267,6 +267,16 @@ function mapAdminHotel(hotel: Hotel): Hotel {
   };
 }
 
+function mapAdminReview(review: Review): Review {
+  return {
+    ...review,
+    id: String(review.id),
+    userId: review.userId ? String(review.userId) : review.userId,
+    reviewableId: review.reviewableId ? String(review.reviewableId) : review.reviewableId,
+    user: mapUser(review.user),
+  };
+}
+
 function mapAdminReservation(reservation: AdminReservation): AdminReservation {
   return {
     ...reservation,
@@ -378,6 +388,7 @@ export const linktravelApi = createApi({
     'Admin.Packages',
     'Admin.RoomTypes',
     'Admin.Reservations',
+    'Admin.Reviews',
   ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
@@ -740,6 +751,47 @@ export const linktravelApi = createApi({
         { type: 'Reservations', id },
       ],
     }),
+
+    // ── Admin · Reviews ────────────────────────────────────────────────
+    getAdminReviews: builder.query<ListResult<Review>, AdminListParams | void>({
+      query: (params) => ({ url: '/admin/reviews', params: params ?? {} }),
+      transformResponse: (response: ApiEnvelope<Review[]>) =>
+        mapCollection(response, mapAdminReview),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'Admin.Reviews' as const, id })),
+              { type: 'Admin.Reviews' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Admin.Reviews' as const, id: 'LIST' }],
+    }),
+    approveAdminReview: builder.mutation<Review, string>({
+      query: (id) => ({ url: `/admin/reviews/${id}/approve`, method: 'PATCH' }),
+      transformResponse: (response: ApiEnvelope<Review>) => mapAdminReview(response.data),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Reviews', id },
+        { type: 'Admin.Reviews', id: 'LIST' },
+        // Approved reviews appear on the public site.
+        'Reviews',
+      ],
+    }),
+    rejectAdminReview: builder.mutation<Review, string>({
+      query: (id) => ({ url: `/admin/reviews/${id}/reject`, method: 'PATCH' }),
+      transformResponse: (response: ApiEnvelope<Review>) => mapAdminReview(response.data),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Reviews', id },
+        { type: 'Admin.Reviews', id: 'LIST' },
+        'Reviews',
+      ],
+    }),
+    deleteAdminReview: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/reviews/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Reviews', id },
+        { type: 'Admin.Reviews', id: 'LIST' },
+        'Reviews',
+      ],
+    }),
   }),
 });
 
@@ -789,4 +841,9 @@ export const {
   useGetAdminReservationsQuery,
   useUpdateAdminReservationStatusMutation,
   useDeleteAdminReservationMutation,
+  // Admin · Reviews
+  useGetAdminReviewsQuery,
+  useApproveAdminReviewMutation,
+  useRejectAdminReviewMutation,
+  useDeleteAdminReviewMutation,
 } = linktravelApi;
