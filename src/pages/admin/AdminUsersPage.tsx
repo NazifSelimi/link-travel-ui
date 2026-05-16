@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Card,
   Table,
@@ -16,8 +16,11 @@ import {
 } from 'antd';
 import { SearchOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchAdminUsers, updateUser, deleteUser } from '@/store/slices/adminSlice';
+import {
+  useDeleteAdminUserMutation,
+  useGetAdminUsersQuery,
+  useUpdateAdminUserMutation,
+} from '@/store/linktravelApi';
 import type { User } from '@/types';
 
 const roleColors: Record<string, string> = {
@@ -26,8 +29,6 @@ const roleColors: Record<string, string> = {
 };
 
 export default function AdminUsersPage() {
-  const dispatch = useAppDispatch();
-  const { users, loading } = useAppSelector((s) => s.admin);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<string | undefined>();
   const [page, setPage] = useState(1);
@@ -36,18 +37,19 @@ export default function AdminUsersPage() {
   const [selected, setSelected] = useState<User | null>(null);
   const [form] = Form.useForm();
 
-  const load = useCallback(() => {
-    dispatch(
-      fetchAdminUsers({
-        search: search || undefined,
-        role: roleFilter,
-        page,
-        per_page: 20,
-      }),
-    );
-  }, [dispatch, search, roleFilter, page]);
+  const { data, isFetching } = useGetAdminUsersQuery({
+    search: search || undefined,
+    role: roleFilter,
+    page,
+    per_page: 20,
+  });
+  const [updateUser, { isLoading: isUpdating }] = useUpdateAdminUserMutation();
+  const [deleteUser] = useDeleteAdminUserMutation();
 
-  useEffect(() => { load(); }, [load]);
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const currentPage = data?.currentPage ?? page;
+  const perPage = data?.perPage ?? 20;
 
   const handleSearch = (val: string) => {
     setSearch(val);
@@ -75,10 +77,9 @@ export default function AdminUsersPage() {
     if (!selected) return;
     try {
       const values = await form.validateFields();
-      await dispatch(updateUser({ id: selected.id, data: values })).unwrap();
+      await updateUser({ id: selected.id, data: values }).unwrap();
       message.success('User updated');
       setEditOpen(false);
-      load();
     } catch {
       message.error('Failed to update user');
     }
@@ -86,7 +87,7 @@ export default function AdminUsersPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deleteUser(id)).unwrap();
+      await deleteUser(id).unwrap();
       message.success('User deleted');
     } catch {
       message.error('Failed to delete user');
@@ -176,14 +177,14 @@ export default function AdminUsersPage() {
         }
       >
         <Table
-          dataSource={users.data}
+          dataSource={items}
           columns={columns}
           rowKey="id"
-          loading={loading.users}
+          loading={isFetching}
           pagination={{
-            current: users.page,
-            pageSize: users.pageSize,
-            total: users.total,
+            current: currentPage,
+            pageSize: perPage,
+            total: total,
             onChange: (p) => setPage(p),
             showSizeChanger: false,
           }}
@@ -221,6 +222,7 @@ export default function AdminUsersPage() {
         onOk={handleEdit}
         okText="Update"
         width={480}
+        confirmLoading={isUpdating}
       >
         <Form form={form} layout="vertical">
           <Space style={{ width: '100%' }} size={16}>

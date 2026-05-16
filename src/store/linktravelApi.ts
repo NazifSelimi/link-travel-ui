@@ -17,6 +17,7 @@ import {
   serializeDestinationPayload,
   serializeHotelPayload,
   serializePackagePayload,
+  serializeUserPayload,
 } from '@/api/serializers';
 
 type ApiEnvelope<T> = {
@@ -268,6 +269,17 @@ function mapAdminHotel(hotel: Hotel): Hotel {
   };
 }
 
+// Admin user view: keep the server-given role and names as-is. We deliberately
+// do NOT route through the public mapUser (which injects the email-whitelist
+// admin-promotion fallback and a "Traveler" default firstName) — admins must
+// see the real stored state.
+function mapAdminUser(user: User): User {
+  return {
+    ...user,
+    id: String(user.id),
+  };
+}
+
 function mapAdminContact(contact: ContactMessage): ContactMessage {
   return {
     ...contact,
@@ -398,6 +410,7 @@ export const linktravelApi = createApi({
     'Admin.Reservations',
     'Admin.Reviews',
     'Admin.Contacts',
+    'Admin.Users',
   ],
   endpoints: (builder) => ({
     getDestinations: builder.query<ListResult<Destination>, SearchParams | void>({
@@ -830,6 +843,41 @@ export const linktravelApi = createApi({
         { type: 'Admin.Contacts', id: 'LIST' },
       ],
     }),
+
+    // ── Admin · Users ──────────────────────────────────────────────────
+    getAdminUsers: builder.query<ListResult<User>, AdminListParams | void>({
+      query: (params) => ({ url: '/admin/users', params: params ?? {} }),
+      transformResponse: (response: ApiEnvelope<User[]>) =>
+        mapCollection(response, mapAdminUser),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'Admin.Users' as const, id })),
+              { type: 'Admin.Users' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Admin.Users' as const, id: 'LIST' }],
+    }),
+    updateAdminUser: builder.mutation<User, { id: string; data: Partial<User> }>({
+      query: ({ id, data }) => ({
+        url: `/admin/users/${id}`,
+        method: 'PUT',
+        body: serializeUserPayload(data),
+      }),
+      transformResponse: (response: ApiEnvelope<User>) => mapAdminUser(response.data),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Admin.Users', id },
+        { type: 'Admin.Users', id: 'LIST' },
+        // The current user's /auth/me could be the one being edited.
+        'User',
+      ],
+    }),
+    deleteAdminUser: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/users/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Admin.Users', id },
+        { type: 'Admin.Users', id: 'LIST' },
+      ],
+    }),
   }),
 });
 
@@ -888,4 +936,8 @@ export const {
   useGetAdminContactsQuery,
   useMarkAdminContactAsReadMutation,
   useDeleteAdminContactMutation,
+  // Admin · Users
+  useGetAdminUsersQuery,
+  useUpdateAdminUserMutation,
+  useDeleteAdminUserMutation,
 } = linktravelApi;
