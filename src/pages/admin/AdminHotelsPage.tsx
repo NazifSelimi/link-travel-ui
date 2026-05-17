@@ -8,6 +8,7 @@ import {
   Modal,
   Form,
   Switch,
+  Tabs,
   Tag,
   Rate,
   InputNumber,
@@ -103,7 +104,11 @@ export default function AdminHotelsPage() {
   const openCreate = () => {
     setEditing(null);
     form.resetFields();
-    form.setFieldsValue({ publishStatus: 'draft', images: [] });
+    form.setFieldsValue({
+      publishStatus: 'draft',
+      images: [],
+      translations: { mk: {}, shq: {} },
+    });
     setModalOpen(true);
   };
 
@@ -134,6 +139,12 @@ export default function AdminHotelsPage() {
       checkIn: record.policies?.checkIn,
       checkOut: record.policies?.checkOut,
       cancellation: record.policies?.cancellation,
+      children: record.policies?.children,
+      pets: record.policies?.pets,
+      translations: {
+        mk: record.translations?.mk ?? {},
+        shq: record.translations?.shq ?? {},
+      },
     });
     setModalOpen(true);
   };
@@ -149,11 +160,15 @@ export default function AdminHotelsPage() {
           checkIn: values.checkIn || null,
           checkOut: values.checkOut || null,
           cancellation: values.cancellation || null,
+          children: values.children || null,
+          pets: values.pets || null,
         },
       };
       delete payload.checkIn;
       delete payload.checkOut;
       delete payload.cancellation;
+      delete payload.children;
+      delete payload.pets;
 
       if (editing) {
         await updateHotel({ id: editing.id, data: payload }).unwrap();
@@ -176,6 +191,46 @@ export default function AdminHotelsPage() {
     } catch {
       message.error('Failed to delete hotel');
     }
+  };
+
+  // Render the translatable fields for a given locale. The English tab binds
+  // to the base columns; the mk / shq tabs bind to nested translations paths
+  // that flow through serializeHotelPayload's translations block.
+  const renderTranslatableFields = (locale: 'en' | 'mk' | 'shq') => {
+    const fieldName = (key: string): string | (string | number)[] =>
+      locale === 'en' ? key : ['translations', locale, key];
+    const isEn = locale === 'en';
+
+    return (
+      <>
+        <Form.Item
+          name={fieldName('name')}
+          label="Name"
+          rules={isEn ? [{ required: true }] : []}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item name={fieldName('shortDescription')} label="Short Description">
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name={fieldName('description')}
+          label="Description"
+          rules={isEn ? [{ required: true }] : []}
+        >
+          <TextArea rows={3} />
+        </Form.Item>
+        <Form.Item name={fieldName('cancellation')} label="Cancellation Policy">
+          <TextArea rows={2} />
+        </Form.Item>
+        <Form.Item name={fieldName('children')} label="Children Policy">
+          <TextArea rows={2} />
+        </Form.Item>
+        <Form.Item name={fieldName('pets')} label="Pets Policy">
+          <TextArea rows={2} />
+        </Form.Item>
+      </>
+    );
   };
 
   const columns: ColumnsType<Hotel> = [
@@ -282,9 +337,15 @@ export default function AdminHotelsPage() {
         confirmLoading={isCreating || isUpdating}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
+          <Tabs
+            defaultActiveKey="en"
+            items={[
+              { key: 'en',  label: 'English',     forceRender: true, children: renderTranslatableFields('en') },
+              { key: 'mk',  label: 'Македонски',  forceRender: true, children: renderTranslatableFields('mk') },
+              { key: 'shq', label: 'Shqip',       forceRender: true, children: renderTranslatableFields('shq') },
+            ]}
+            style={{ marginBottom: 16 }}
+          />
           <Form.Item name="destinationId" label="Destination" rules={[{ required: true }]}>
             <Select
               showSearch
@@ -296,12 +357,6 @@ export default function AdminHotelsPage() {
               }
               options={destinationOptions}
             />
-          </Form.Item>
-          <Form.Item name="shortDescription" label="Short Description">
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description" rules={[{ required: true }]}>
-            <TextArea rows={3} />
           </Form.Item>
           <Form.Item name="countryCode" label="Country" rules={[{ required: true, message: 'Please select a country' }]}>
             <Select
@@ -418,9 +473,6 @@ export default function AdminHotelsPage() {
               <Input placeholder="11:00" />
             </Form.Item>
           </Space>
-          <Form.Item name="cancellation" label="Cancellation Policy">
-            <Input />
-          </Form.Item>
           <Form.Item name="publishStatus" label="Publish Status" initialValue="draft">
             <Select
               options={[

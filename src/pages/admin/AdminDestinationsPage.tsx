@@ -8,6 +8,7 @@ import {
   Modal,
   Form,
   Switch,
+  Tabs,
   Tag,
   Popconfirm,
   message,
@@ -139,7 +140,11 @@ export default function AdminDestinationsPage() {
     setEditing(null);
     setTimezoneChoices(timezoneOptions);
     form.resetFields();
-    form.setFieldsValue({ publishStatus: 'draft', images: [] });
+    form.setFieldsValue({
+      publishStatus: 'draft',
+      images: [],
+      translations: { mk: {}, shq: {} },
+    });
     setModalOpen(true);
   };
 
@@ -176,6 +181,10 @@ export default function AdminDestinationsPage() {
       tags: record.tags ?? [],
       highlights: record.highlights ?? [],
       coordinates: record.coordinates,
+      translations: {
+        mk: record.translations?.mk ?? {},
+        shq: record.translations?.shq ?? {},
+      },
     });
     setModalOpen(true);
   };
@@ -238,6 +247,62 @@ export default function AdminDestinationsPage() {
         </div>
       ),
     }));
+
+  // Render the translatable fields for a given locale. The English tab binds
+  // directly to the base columns (`name`, `description`, …). The mk / shq
+  // tabs bind to the nested translations.<locale>.<field> paths, which the
+  // backend's SyncsModelTranslations trait persists to the translation tables.
+  const renderTranslatableFields = (locale: 'en' | 'mk' | 'shq') => {
+    const fieldName = (key: string): string | (string | number)[] =>
+      locale === 'en' ? key : ['translations', locale, key];
+    const isEn = locale === 'en';
+
+    return (
+      <>
+        <Form.Item
+          name={fieldName('name')}
+          label="Name"
+          rules={isEn ? [{ required: true }] : []}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item name={fieldName('shortDescription')} label="Short Description">
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name={fieldName('description')}
+          label="Description"
+          rules={isEn ? [{ required: true }] : []}
+        >
+          <TextArea rows={4} />
+        </Form.Item>
+        <Form.Item name={fieldName('tags')} label="Tags">
+          <Select
+            mode="tags"
+            showSearch
+            placeholder="Choose or type tags"
+            options={wrapSelectOptions(destinationTagOptions)}
+            filterOption={filterOption}
+            tokenSeparators={[',']}
+            popupMatchSelectWidth={false}
+            styles={selectPopupStyles}
+          />
+        </Form.Item>
+        <Form.Item name={fieldName('highlights')} label="Highlights">
+          <Select
+            mode="tags"
+            showSearch
+            placeholder="Choose or type highlights"
+            options={wrapSelectOptions(destinationHighlightOptions)}
+            filterOption={filterOption}
+            tokenSeparators={[',']}
+            popupMatchSelectWidth={false}
+            styles={selectPopupStyles}
+          />
+        </Form.Item>
+      </>
+    );
+  };
 
   const columns: ColumnsType<Destination> = [
     {
@@ -342,9 +407,15 @@ export default function AdminDestinationsPage() {
         confirmLoading={isCreating || isUpdating}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
+          <Tabs
+            defaultActiveKey="en"
+            items={[
+              { key: 'en',  label: 'English',     forceRender: true, children: renderTranslatableFields('en') },
+              { key: 'mk',  label: 'Македонски',  forceRender: true, children: renderTranslatableFields('mk') },
+              { key: 'shq', label: 'Shqip',       forceRender: true, children: renderTranslatableFields('shq') },
+            ]}
+            style={{ marginBottom: 16 }}
+          />
           <Form.Item name="countryCode" label="Country" rules={[{ required: true, message: 'Please select a country' }]}>
             <Select
               showSearch
@@ -409,12 +480,6 @@ export default function AdminDestinationsPage() {
           <Form.Item name="formattedAddress" label="Formatted Address">
             <Input />
           </Form.Item>
-          <Form.Item name="shortDescription" label="Short Description">
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description" rules={[{ required: true }]}>
-            <TextArea rows={4} />
-          </Form.Item>
           <Form.Item name="image" hidden>
             <Input />
           </Form.Item>
@@ -474,30 +539,6 @@ export default function AdminDestinationsPage() {
               />
             </Form.Item>
           </Space>
-          <Form.Item name="tags" label="Tags">
-            <Select
-              mode="tags"
-              showSearch
-              placeholder="Choose or type tags"
-              options={wrapSelectOptions(destinationTagOptions)}
-              filterOption={filterOption}
-              tokenSeparators={[',']}
-              popupMatchSelectWidth={false}
-              styles={selectPopupStyles}
-            />
-          </Form.Item>
-          <Form.Item name="highlights" label="Highlights">
-            <Select
-              mode="tags"
-              showSearch
-              placeholder="Choose or type highlights"
-              options={wrapSelectOptions(destinationHighlightOptions)}
-              filterOption={filterOption}
-              tokenSeparators={[',']}
-              popupMatchSelectWidth={false}
-              styles={selectPopupStyles}
-            />
-          </Form.Item>
           <Form.Item name="mapUrl" label="Map URL">
             <Input placeholder="https://maps.google.com/..." />
           </Form.Item>

@@ -9,6 +9,7 @@ import {
   Modal,
   Form,
   Switch,
+  Tabs,
   Tag,
   InputNumber,
   Select,
@@ -104,9 +105,23 @@ export default function AdminPackagesPage() {
   const openCreate = () => {
     setEditing(null);
     form.resetFields();
-    form.setFieldsValue({ featured: false, publishStatus: 'draft', images: [] });
+    form.setFieldsValue({
+      featured: false,
+      publishStatus: 'draft',
+      images: [],
+      translations: { mk: {}, shq: {} },
+    });
     setModalOpen(true);
   };
+
+  // Itinerary highlights are stored as string[] but the textarea works on a
+  // newline-joined string. Convert in both directions.
+  const itineraryStringToArray = (value: unknown): string[] =>
+    typeof value === 'string'
+      ? value.split('\n').map((item) => item.trim()).filter(Boolean)
+      : [];
+  const itineraryArrayToString = (value: unknown): string =>
+    Array.isArray(value) ? value.join('\n') : '';
 
   const openEdit = (record: TravelPackage) => {
     setEditing(record);
@@ -124,11 +139,25 @@ export default function AdminPackagesPage() {
       category: record.category,
       featured: record.featured,
       includes: record.includes ?? [],
-      itineraryHighlights: record.itineraryHighlights?.join('\n'),
+      itineraryHighlights: itineraryArrayToString(record.itineraryHighlights),
       meetingPoint: record.meetingPoint,
       meetingMapUrl: record.meetingMapUrl,
       meetingCoordinates: record.meetingCoordinates,
       publishStatus: record.publishStatus ?? 'draft',
+      translations: {
+        mk: record.translations?.mk
+          ? {
+              ...record.translations.mk,
+              itineraryHighlights: itineraryArrayToString(record.translations.mk.itineraryHighlights),
+            }
+          : {},
+        shq: record.translations?.shq
+          ? {
+              ...record.translations.shq,
+              itineraryHighlights: itineraryArrayToString(record.translations.shq.itineraryHighlights),
+            }
+          : {},
+      },
     });
     setModalOpen(true);
   };
@@ -140,9 +169,19 @@ export default function AdminPackagesPage() {
         ...values,
         image: values.images?.[0] || '',
         includes: normalizeTagValues(values.includes),
-        itineraryHighlights: values.itineraryHighlights
-          ? values.itineraryHighlights.split('\n').map((item: string) => item.trim()).filter(Boolean)
-          : [],
+        itineraryHighlights: itineraryStringToArray(values.itineraryHighlights),
+        translations: values.translations
+          ? {
+              mk: {
+                ...(values.translations.mk ?? {}),
+                itineraryHighlights: itineraryStringToArray(values.translations.mk?.itineraryHighlights),
+              },
+              shq: {
+                ...(values.translations.shq ?? {}),
+                itineraryHighlights: itineraryStringToArray(values.translations.shq?.itineraryHighlights),
+              },
+            }
+          : undefined,
       };
 
       if (editing) {
@@ -166,6 +205,48 @@ export default function AdminPackagesPage() {
     } catch {
       message.error('Failed to delete package');
     }
+  };
+
+  // Render the translatable fields for a given locale. The English tab binds
+  // to the base columns; the mk / shq tabs bind to nested translations paths.
+  // `itineraryHighlights` lives in the form as a newline-separated string for
+  // the TextArea; handleSubmit converts it back to string[] at submit time.
+  const renderTranslatableFields = (locale: 'en' | 'mk' | 'shq') => {
+    const fieldName = (key: string): string | (string | number)[] =>
+      locale === 'en' ? key : ['translations', locale, key];
+    const isEn = locale === 'en';
+
+    return (
+      <>
+        <Form.Item
+          name={fieldName('name')}
+          label="Name"
+          rules={isEn ? [{ required: true }] : []}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name={fieldName('description')}
+          label="Description"
+          rules={isEn ? [{ required: true }] : []}
+        >
+          <TextArea rows={4} />
+        </Form.Item>
+        <Form.Item name={fieldName('includes')} label="Includes">
+          <Select
+            mode="tags"
+            showSearch
+            placeholder="Choose presets or type custom inclusions"
+            optionFilterProp="label"
+            options={packageIncludeOptions}
+            popupMatchSelectWidth={false}
+          />
+        </Form.Item>
+        <Form.Item name={fieldName('itineraryHighlights')} label="Itinerary Highlights">
+          <TextArea rows={4} placeholder={'One highlight per line\nAirport pickup\nGuided city tour'} />
+        </Form.Item>
+      </>
+    );
   };
 
   const columns: ColumnsType<TravelPackage> = [
@@ -297,9 +378,15 @@ export default function AdminPackagesPage() {
             message="Publishing checklist"
             description="Published packages should point to a published destination, optionally a matching published hotel, and include a real meeting point, image, duration, category, and includes list."
           />
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
+          <Tabs
+            defaultActiveKey="en"
+            items={[
+              { key: 'en',  label: 'English',     forceRender: true, children: renderTranslatableFields('en') },
+              { key: 'mk',  label: 'Македонски',  forceRender: true, children: renderTranslatableFields('mk') },
+              { key: 'shq', label: 'Shqip',       forceRender: true, children: renderTranslatableFields('shq') },
+            ]}
+            style={{ marginBottom: 16 }}
+          />
           <Form.Item name="destinationId" label="Destination" rules={[{ required: true }]}>
             <Select
               showSearch
@@ -321,9 +408,6 @@ export default function AdminPackagesPage() {
               disabled={!selectedDestinationId}
               options={hotelOptions}
             />
-          </Form.Item>
-          <Form.Item name="description" label="Description" rules={[{ required: true }]}>
-            <TextArea rows={4} />
           </Form.Item>
           <Form.Item name="image" hidden>
             <Input />
@@ -365,19 +449,6 @@ export default function AdminPackagesPage() {
               <InputNumber min={0} prefix="$" style={{ width: '100%' }} />
             </Form.Item>
           </Space>
-          <Form.Item name="includes" label="Includes">
-            <Select
-              mode="tags"
-              showSearch
-              placeholder="Choose presets or type custom inclusions"
-              optionFilterProp="label"
-              options={packageIncludeOptions}
-              popupMatchSelectWidth={false}
-            />
-          </Form.Item>
-          <Form.Item name="itineraryHighlights" label="Itinerary Highlights">
-            <TextArea rows={4} placeholder={'One highlight per line\nAirport pickup\nGuided city tour'} />
-          </Form.Item>
           <LocationPicker
             label="Meeting point"
             placeholder="Search departure point, airport, or pickup address"
