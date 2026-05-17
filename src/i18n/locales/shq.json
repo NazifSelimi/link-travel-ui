@@ -1,0 +1,93 @@
+{
+  "common": {
+    "save": "Ruaj",
+    "cancel": "Anulo",
+    "delete": "Fshi",
+    "edit": "Modifiko",
+    "add": "Shto",
+    "search": "Kërko",
+    "create": "Krijo",
+    "update": "Përditëso",
+    "loading": "Po ngarkohet...",
+    "noData": "Nuk ka të dhëna",
+    "yes": "Po",
+    "no": "Jo",
+    "submit": "Dërgo",
+    "back": "Mbrapa",
+    "next": "Vazhdo",
+    "continue": "Vazhdo",
+    "confirm": "Konfirmo",
+    "close": "Mbyll",
+    "actions": "Veprime",
+    "details": "Detaje",
+    "language": "Gjuha"
+  },
+  "auth": {
+    "signIn": "Hyr",
+    "signUp": "Regjistrohu",
+    "signOut": "Dil",
+    "logout": "Dilni",
+    "email": "Email",
+    "password": "Fjalëkalimi",
+    "rememberMe": "Më kujto",
+    "forgotPassword": "Harruat fjalëkalimin?",
+    "createAccount": "Krijo llogarinë",
+    "alreadyHaveAccount": "Ke tashmë një llogari?",
+    "dontHaveAccount": "Nuk ke llogari?",
+    "welcomeBack": "Mirë se erdhe përsëri!",
+    "loginFailed": "Hyrja dështoi. Provoni përsëri."
+  },
+  "nav": {
+    "home": "Ballina",
+    "destinations": "Destinacionet",
+    "hotels": "Hotelet",
+    "packages": "Paketat",
+    "about": "Rreth nesh",
+    "contact": "Kontakti",
+    "myAccount": "Llogaria ime",
+    "adminPanel": "Paneli admin"
+  },
+  "admin": {
+    "panel": "Paneli admin",
+    "backToSite": "Kthehu te faqja",
+    "administrator": "Administrator",
+    "menu": {
+      "dashboard": "Paneli",
+      "destinations": "Destinacionet",
+      "hotels": "Hotelet",
+      "roomTypes": "Llojet e dhomave",
+      "packages": "Paketat",
+      "reservations": "Rezervimet",
+      "reviews": "Vlerësimet",
+      "contacts": "Kontaktet",
+      "users": "Përdoruesit"
+    },
+    "form": {
+      "tabs": {
+        "english": "English",
+        "macedonian": "Македонски",
+        "albanian": "Shqip"
+      },
+      "publishStatus": "Statusi i publikimit",
+      "draft": "Draft",
+      "published": "Publikuar",
+      "featured": "I veçantë",
+      "name": "Emri",
+      "shortDescription": "Përshkrimi i shkurtër",
+      "description": "Përshkrimi",
+      "tags": "Etiketat",
+      "highlights": "Atraksionet",
+      "cancellationPolicy": "Politika e anulimit",
+      "childrenPolicy": "Fëmijët",
+      "petsPolicy": "Kafshët shtëpiake",
+      "includes": "Përfshin",
+      "itineraryHighlights": "Programi"
+    },
+    "messages": {
+      "saved": "Ruajtur",
+      "deleted": "Fshirë",
+      "saveFailed": "Ruajtja dështoi",
+      "deleteFailed": "Fshirja dështoi"
+    }
+  }
+}

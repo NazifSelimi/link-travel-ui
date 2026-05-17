@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Card,
@@ -43,6 +44,7 @@ const packageCategoryOptions = [
 ];
 
 export default function AdminPackagesPage() {
+  const { t } = useTranslation();
   // Destinations + Hotels dropdowns via RTK Query (read-only consumers).
   const { data: destinationsData } = useGetAdminDestinationsQuery({ per_page: 100 });
   const destinationItems = useMemo(() => destinationsData?.items ?? [], [destinationsData]);
@@ -381,9 +383,9 @@ export default function AdminPackagesPage() {
           <Tabs
             defaultActiveKey="en"
             items={[
-              { key: 'en',  label: 'English',     forceRender: true, children: renderTranslatableFields('en') },
-              { key: 'mk',  label: 'Македонски',  forceRender: true, children: renderTranslatableFields('mk') },
-              { key: 'shq', label: 'Shqip',       forceRender: true, children: renderTranslatableFields('shq') },
+              { key: 'en',  label: t('admin.form.tabs.english'),    forceRender: true, children: renderTranslatableFields('en') },
+              { key: 'mk',  label: t('admin.form.tabs.macedonian'), forceRender: true, children: renderTranslatableFields('mk') },
+              { key: 'shq', label: t('admin.form.tabs.albanian'),   forceRender: true, children: renderTranslatableFields('shq') },
             ]}
             style={{ marginBottom: 16 }}
           />

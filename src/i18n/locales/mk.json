@@ -1,0 +1,93 @@
+{
+  "common": {
+    "save": "Зачувај",
+    "cancel": "Откажи",
+    "delete": "Избриши",
+    "edit": "Уреди",
+    "add": "Додај",
+    "search": "Пребарај",
+    "create": "Креирај",
+    "update": "Ажурирај",
+    "loading": "Се вчитува...",
+    "noData": "Нема податоци",
+    "yes": "Да",
+    "no": "Не",
+    "submit": "Испрати",
+    "back": "Назад",
+    "next": "Следно",
+    "continue": "Продолжи",
+    "confirm": "Потврди",
+    "close": "Затвори",
+    "actions": "Акции",
+    "details": "Детали",
+    "language": "Јазик"
+  },
+  "auth": {
+    "signIn": "Најави се",
+    "signUp": "Регистрирај се",
+    "signOut": "Одјави се",
+    "logout": "Одјава",
+    "email": "Е-пошта",
+    "password": "Лозинка",
+    "rememberMe": "Запомни ме",
+    "forgotPassword": "Заборавена лозинка?",
+    "createAccount": "Креирај профил",
+    "alreadyHaveAccount": "Веќе имаш профил?",
+    "dontHaveAccount": "Немаш профил?",
+    "welcomeBack": "Добредојде назад!",
+    "loginFailed": "Најавата не успеа. Обиди се повторно."
+  },
+  "nav": {
+    "home": "Почетна",
+    "destinations": "Дестинации",
+    "hotels": "Хотели",
+    "packages": "Аранжмани",
+    "about": "За нас",
+    "contact": "Контакт",
+    "myAccount": "Мојот профил",
+    "adminPanel": "Админ панел"
+  },
+  "admin": {
+    "panel": "Админ панел",
+    "backToSite": "Назад на сајтот",
+    "administrator": "Администратор",
+    "menu": {
+      "dashboard": "Контролна табла",
+      "destinations": "Дестинации",
+      "hotels": "Хотели",
+      "roomTypes": "Типови соби",
+      "packages": "Аранжмани",
+      "reservations": "Резервации",
+      "reviews": "Рецензии",
+      "contacts": "Контакти",
+      "users": "Корисници"
+    },
+    "form": {
+      "tabs": {
+        "english": "English",
+        "macedonian": "Македонски",
+        "albanian": "Shqip"
+      },
+      "publishStatus": "Статус на објавување",
+      "draft": "Нацрт",
+      "published": "Објавено",
+      "featured": "Истакнато",
+      "name": "Име",
+      "shortDescription": "Краток опис",
+      "description": "Опис",
+      "tags": "Тагови",
+      "highlights": "Атракции",
+      "cancellationPolicy": "Услови за откажување",
+      "childrenPolicy": "Деца",
+      "petsPolicy": "Миленици",
+      "includes": "Вклучува",
+      "itineraryHighlights": "Програма"
+    },
+    "messages": {
+      "saved": "Зачувано",
+      "deleted": "Избришано",
+      "saveFailed": "Зачувувањето не успеа",
+      "deleteFailed": "Бришењето не успеа"
+    }
+  }
+}

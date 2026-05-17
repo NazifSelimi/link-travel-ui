@@ -1,0 +1,93 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "create": "Create",
+    "update": "Update",
+    "loading": "Loading...",
+    "noData": "No data",
+    "yes": "Yes",
+    "no": "No",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "continue": "Continue",
+    "confirm": "Confirm",
+    "close": "Close",
+    "actions": "Actions",
+    "details": "Details",
+    "language": "Language"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "createAccount": "Create your account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "welcomeBack": "Welcome back!",
+    "loginFailed": "Login failed. Please try again."
+  },
+  "nav": {
+    "home": "Home",
+    "destinations": "Destinations",
+    "hotels": "Hotels",
+    "packages": "Packages",
+    "about": "About",
+    "contact": "Contact",
+    "myAccount": "My Account",
+    "adminPanel": "Admin Panel"
+  },
+  "admin": {
+    "panel": "Admin Panel",
+    "backToSite": "Back to Site",
+    "administrator": "Administrator",
+    "menu": {
+      "dashboard": "Dashboard",
+      "destinations": "Destinations",
+      "hotels": "Hotels",
+      "roomTypes": "Room Types",
+      "packages": "Packages",
+      "reservations": "Reservations",
+      "reviews": "Reviews",
+      "contacts": "Contacts",
+      "users": "Users"
+    },
+    "form": {
+      "tabs": {
+        "english": "English",
+        "macedonian": "Македонски",
+        "albanian": "Shqip"
+      },
+      "publishStatus": "Publish Status",
+      "draft": "Draft",
+      "published": "Published",
+      "featured": "Featured",
+      "name": "Name",
+      "shortDescription": "Short Description",
+      "description": "Description",
+      "tags": "Tags",
+      "highlights": "Highlights",
+      "cancellationPolicy": "Cancellation Policy",
+      "childrenPolicy": "Children Policy",
+      "petsPolicy": "Pets Policy",
+      "includes": "Includes",
+      "itineraryHighlights": "Itinerary Highlights"
+    },
+    "messages": {
+      "saved": "Saved",
+      "deleted": "Deleted",
+      "saveFailed": "Failed to save",
+      "deleteFailed": "Failed to delete"
+    }
+  }
+}

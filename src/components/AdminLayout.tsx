@@ -18,57 +18,62 @@ import {
   BellOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { logout } from '@/store/slices/authSlice';
 import { useGetAdminDashboardQuery } from '@/store/linktravelApi';
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 
 const { Sider, Content, Header } = Layout;
 const { Title, Text } = Typography;
 
-const pageTitles: Record<string, string> = {
-  '/admin': 'Dashboard',
-  '/admin/destinations': 'Destinations',
-  '/admin/hotels': 'Hotels',
-  '/admin/packages': 'Packages',
-  '/admin/room-types': 'Room Types',
-  '/admin/reservations': 'Reservations',
-  '/admin/reviews': 'Reviews',
-  '/admin/contacts': 'Contacts',
-  '/admin/users': 'Users',
+// Map admin routes to translation keys; the rendered title is resolved per
+// render in the component body so it tracks the active locale.
+const pageTitleKeys: Record<string, string> = {
+  '/admin':              'admin.menu.dashboard',
+  '/admin/destinations': 'admin.menu.destinations',
+  '/admin/hotels':       'admin.menu.hotels',
+  '/admin/packages':     'admin.menu.packages',
+  '/admin/room-types':   'admin.menu.roomTypes',
+  '/admin/reservations': 'admin.menu.reservations',
+  '/admin/reviews':      'admin.menu.reviews',
+  '/admin/contacts':     'admin.menu.contacts',
+  '/admin/users':        'admin.menu.users',
 };
 
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const { user } = useAppSelector((s) => s.auth);
   const { data: dashboard } = useGetAdminDashboardQuery();
   const pendingCount = dashboard?.stats.pending_reservations ?? 0;
 
   const menuItems = useMemo(
     () => [
-      { key: '/admin', icon: <DashboardOutlined />, label: <Link to="/admin">Dashboard</Link> },
-      { key: '/admin/destinations', icon: <GlobalOutlined />, label: <Link to="/admin/destinations">Destinations</Link> },
-      { key: '/admin/hotels', icon: <HotelIcon />, label: <Link to="/admin/hotels">Hotels</Link> },
-      { key: '/admin/room-types', icon: <AppstoreOutlined />, label: <Link to="/admin/room-types">Room Types</Link> },
-      { key: '/admin/packages', icon: <GiftOutlined />, label: <Link to="/admin/packages">Packages</Link> },
+      { key: '/admin',              icon: <DashboardOutlined />, label: <Link to="/admin">{t('admin.menu.dashboard')}</Link> },
+      { key: '/admin/destinations', icon: <GlobalOutlined />,    label: <Link to="/admin/destinations">{t('admin.menu.destinations')}</Link> },
+      { key: '/admin/hotels',       icon: <HotelIcon />,         label: <Link to="/admin/hotels">{t('admin.menu.hotels')}</Link> },
+      { key: '/admin/room-types',   icon: <AppstoreOutlined />,  label: <Link to="/admin/room-types">{t('admin.menu.roomTypes')}</Link> },
+      { key: '/admin/packages',     icon: <GiftOutlined />,      label: <Link to="/admin/packages">{t('admin.menu.packages')}</Link> },
       {
         key: '/admin/reservations',
         icon: <FileTextOutlined />,
         label: (
           <Link to="/admin/reservations">
             <Space>
-              Reservations
+              {t('admin.menu.reservations')}
               {pendingCount > 0 && <Badge count={pendingCount} size="small" />}
             </Space>
           </Link>
         ),
       },
-      { key: '/admin/reviews', icon: <CommentOutlined />, label: <Link to="/admin/reviews">Reviews</Link> },
-      { key: '/admin/contacts', icon: <MessageOutlined />, label: <Link to="/admin/contacts">Contacts</Link> },
-      { key: '/admin/users', icon: <UserOutlined />, label: <Link to="/admin/users">Users</Link> },
+      { key: '/admin/reviews',   icon: <CommentOutlined />, label: <Link to="/admin/reviews">{t('admin.menu.reviews')}</Link> },
+      { key: '/admin/contacts',  icon: <MessageOutlined />, label: <Link to="/admin/contacts">{t('admin.menu.contacts')}</Link> },
+      { key: '/admin/users',     icon: <UserOutlined />,    label: <Link to="/admin/users">{t('admin.menu.users')}</Link> },
     ],
-    [pendingCount],
+    [pendingCount, t],
   );
 
   const [collapsed, setCollapsed] = useState(false);
@@ -89,7 +94,8 @@ export default function AdminLayout() {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  const currentTitle = pageTitles[location.pathname] || 'Admin';
+  const currentTitleKey = pageTitleKeys[location.pathname];
+  const currentTitle = currentTitleKey ? t(currentTitleKey) : t('admin.panel');
 
   const handleLogout = async () => {
     await dispatch(logout());
@@ -97,9 +103,9 @@ export default function AdminLayout() {
   };
 
   const userMenuItems = [
-    { key: 'profile', icon: <UserOutlined />, label: 'My Profile', onClick: () => navigate('/') },
+    { key: 'profile', icon: <UserOutlined />, label: t('nav.myAccount'), onClick: () => navigate('/') },
     { type: 'divider' as const },
-    { key: 'logout', icon: <LogoutOutlined />, label: 'Logout', danger: true, onClick: handleLogout },
+    { key: 'logout',  icon: <LogoutOutlined />, label: t('auth.logout'), danger: true, onClick: handleLogout },
   ];
 
   const SidebarContent = () => (
@@ -127,7 +133,7 @@ export default function AdminLayout() {
           <div>
             <Text strong style={{ fontSize: 16 }}>LinkTravel</Text>
             <br />
-            <Text type="secondary" style={{ fontSize: 11 }}>Admin Panel</Text>
+            <Text type="secondary" style={{ fontSize: 11 }}>{t('admin.panel')}</Text>
           </div>
         )}
       </div>
@@ -148,7 +154,7 @@ export default function AdminLayout() {
           block
           style={{ justifyContent: collapsed && !isMobile ? 'center' : 'flex-start' }}
         >
-          {(!collapsed || isMobile) && 'Back to Site'}
+          {(!collapsed || isMobile) && t('admin.backToSite')}
         </Button>
       </div>
     </>
@@ -226,6 +232,8 @@ export default function AdminLayout() {
           </Space>
 
           <Space size={isMobile ? 'small' : 'middle'}>
+            <LocaleSwitcher className="text-foreground" />
+
             <Badge count={pendingCount} size="small">
               <Button
                 type="text"
@@ -244,7 +252,7 @@ export default function AdminLayout() {
                     <Text strong style={{ display: 'block', fontSize: 13 }}>
                       {user?.firstName} {user?.lastName}
                     </Text>
-                    <Text type="secondary" style={{ fontSize: 11 }}>Administrator</Text>
+                    <Text type="secondary" style={{ fontSize: 11 }}>{t('admin.administrator')}</Text>
                   </div>
                 )}
               </Space>

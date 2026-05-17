@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   Table,
@@ -50,6 +51,7 @@ const selectPopupStyles = {
 } as const;
 
 export default function AdminDestinationsPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
@@ -410,9 +412,9 @@ export default function AdminDestinationsPage() {
           <Tabs
             defaultActiveKey="en"
             items={[
-              { key: 'en',  label: 'English',     forceRender: true, children: renderTranslatableFields('en') },
-              { key: 'mk',  label: 'Македонски',  forceRender: true, children: renderTranslatableFields('mk') },
-              { key: 'shq', label: 'Shqip',       forceRender: true, children: renderTranslatableFields('shq') },
+              { key: 'en',  label: t('admin.form.tabs.english'),    forceRender: true, children: renderTranslatableFields('en') },
+              { key: 'mk',  label: t('admin.form.tabs.macedonian'), forceRender: true, children: renderTranslatableFields('mk') },
+              { key: 'shq', label: t('admin.form.tabs.albanian'),   forceRender: true, children: renderTranslatableFields('shq') },
             ]}
             style={{ marginBottom: 16 }}
           />
