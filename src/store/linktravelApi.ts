@@ -20,6 +20,7 @@ import {
   serializePackagePayload,
   serializeUserPayload,
 } from '@/api/serializers';
+import i18n, { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n';
 
 type ApiEnvelope<T> = {
   success: boolean;
@@ -377,12 +378,28 @@ function mapCollection<TInput, TOutput>(
   };
 }
 
+// Endpoint-name predicate: every admin endpoint is named with the literal
+// "Admin" infix (getAdminHotels, createAdminPackage, …). We use that to pin
+// admin requests to the base-column locale, so the admin form's English tab
+// hydrates from raw stored content rather than a localized overlay.
+function isAdminEndpoint(endpointName: string | undefined): boolean {
+  return typeof endpointName === 'string' && endpointName.includes('Admin');
+}
+
+function resolveActiveLocale(): string {
+  const lang = i18n.language;
+  if (typeof lang === 'string' && (SUPPORTED_LOCALES as readonly string[]).includes(lang)) {
+    return lang;
+  }
+  return DEFAULT_LOCALE;
+}
+
 const baseQuery = fetchBaseQuery({
   baseUrl: getApiBaseUrl(),
   // No credentials: 'include'. Auth is bearer-token only (see prepareHeaders
   // below); sending session cookies would re-trigger Sanctum's stateful-API
   // CSRF path and break login.
-  prepareHeaders: (headers, { getState }) => {
+  prepareHeaders: (headers, { getState, endpoint }) => {
     const state = getState() as RootState;
     const token = state.auth.token || localStorage.getItem('auth_token');
 
@@ -391,6 +408,12 @@ const baseQuery = fetchBaseQuery({
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
     }
+
+    // Customer-facing endpoints get the active UI locale; admin endpoints
+    // pin to the default locale so the form's EN tab matches base columns.
+    // The backend's SetLocale middleware honours X-Locale ahead of
+    // ?locale= and Accept-Language.
+    headers.set('X-Locale', isAdminEndpoint(endpoint) ? DEFAULT_LOCALE : resolveActiveLocale());
 
     return headers;
   },

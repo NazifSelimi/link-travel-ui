@@ -1,10 +1,11 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ReduxProvider } from '@/store/provider';
 import { MainLayout } from '@/components/layout';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearSession, setUser } from '@/store/slices/authSlice';
-import { useGetUserQuery } from '@/store/linktravelApi';
+import { linktravelApi, useGetUserQuery } from '@/store/linktravelApi';
 
 // Public pages
 const HomePage = lazy(() => import('@/pages/HomePage'));
@@ -48,6 +49,7 @@ function PageLoader() {
 
 function AppRoutes() {
   const dispatch = useAppDispatch();
+  const { i18n } = useTranslation();
   const { token } = useAppSelector((state) => state.auth);
   const { data: currentUser, error } = useGetUserQuery(undefined, {
     skip: !token,
@@ -64,6 +66,22 @@ function AppRoutes() {
       dispatch(clearSession());
     }
   }, [dispatch, error, token]);
+
+  // When the user switches language, the public catalog cache is stale —
+  // the served `name`/`description` overlays change. Invalidate just the
+  // customer-facing tags; the Admin.* tags are unaffected because admin
+  // endpoints pin X-Locale to 'en' regardless of UI locale.
+  useEffect(() => {
+    const onLanguageChange = () => {
+      dispatch(
+        linktravelApi.util.invalidateTags(['Destinations', 'Hotels', 'Packages', 'Reviews']),
+      );
+    };
+    i18n.on('languageChanged', onLanguageChange);
+    return () => {
+      i18n.off('languageChanged', onLanguageChange);
+    };
+  }, [dispatch, i18n]);
 
   return (
     <BrowserRouter>
