@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Star, Wifi, Car, UtensilsCrossed, Waves, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '@/lib/money';
 import { cn } from '@/lib/utils';
 import type { Hotel } from '@/types';
@@ -19,6 +20,7 @@ interface HotelCardProps {
 }
 
 export function HotelCard({ hotel, variant = 'default', className }: HotelCardProps) {
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -66,14 +68,14 @@ export function HotelCard({ hotel, variant = 'default', className }: HotelCardPr
         <div className="flex-1 p-5 sm:p-6 flex flex-col">
           <div className="flex items-center gap-2 mb-2">
             <div className="flex">{renderStars(hotel.stars)}</div>
-            <span className="text-xs text-muted-foreground">{hotel.stars}-star hotel</span>
+            <span className="text-xs text-muted-foreground">{t('hotels.card.starHotel', { count: hotel.stars })}</span>
           </div>
           <h3 className="font-serif text-xl font-bold text-foreground mb-1">
             {hotel.name}
           </h3>
           <p className="text-sm text-muted-foreground flex items-center gap-1 mb-3">
             <MapPin className="h-3.5 w-3.5" />
-            {hotel.address || hotel.formattedAddress || hotel.destination?.name || 'Location unavailable'}
+            {hotel.address || hotel.formattedAddress || hotel.destination?.name || t('hotels.card.locationUnavailable')}
           </p>
           <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
             {hotel.shortDescription}
@@ -96,14 +98,14 @@ export function HotelCard({ hotel, variant = 'default', className }: HotelCardPr
                 <span className="font-bold text-primary">{hotel.rating}</span>
               </div>
               <span className="text-sm text-muted-foreground">
-                {hotel.reviewCount} reviews
+                {hotel.reviewCount} {t('common.review', { count: hotel.reviewCount })}
               </span>
             </div>
             <div className="text-right">
-              <p className="text-xs text-muted-foreground">from</p>
+              <p className="text-xs text-muted-foreground">{t('common.from')}</p>
               <p className="text-xl font-bold text-foreground">
                 {formatCurrency(hotel.pricePerNight, hotel.currency)}
-                <span className="text-sm font-normal text-muted-foreground">/night</span>
+                <span className="text-sm font-normal text-muted-foreground">{t('hotels.card.perNight')}</span>
               </p>
             </div>
           </div>
@@ -172,10 +174,10 @@ export function HotelCard({ hotel, variant = 'default', className }: HotelCardPr
           )}
         </div>
         <div className="flex items-center justify-between pt-4 border-t border-border">
-          <span className="text-sm text-muted-foreground">{hotel.reviewCount} reviews</span>
+          <span className="text-sm text-muted-foreground">{hotel.reviewCount} {t('common.review', { count: hotel.reviewCount })}</span>
           <div className="text-right">
             <span className="text-xl font-bold text-foreground">{formatCurrency(hotel.pricePerNight, hotel.currency)}</span>
-            <span className="text-sm text-muted-foreground">/night</span>
+            <span className="text-sm text-muted-foreground">{t('hotels.card.perNight')}</span>
           </div>
         </div>
       </div>

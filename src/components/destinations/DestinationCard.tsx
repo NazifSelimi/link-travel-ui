@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Star, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '@/lib/money';
 import { cn } from '@/lib/utils';
 import type { Destination } from '@/types';
@@ -12,6 +13,7 @@ interface DestinationCardProps {
 }
 
 export function DestinationCard({ destination, variant = 'default', className }: DestinationCardProps) {
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
 
   if (variant === 'featured') {
@@ -55,7 +57,7 @@ export function DestinationCard({ destination, variant = 'default', className }:
               <span className="text-background/60 text-sm">({destination.reviewCount})</span>
             </div>
             <div className="text-background">
-              <span className="text-sm text-background/60">from </span>
+              <span className="text-sm text-background/60">{t('common.from')} </span>
               <span className="font-bold">{formatCurrency(destination.priceFrom, destination.currency)}</span>
             </div>
           </div>
@@ -63,7 +65,7 @@ export function DestinationCard({ destination, variant = 'default', className }:
             'mt-4 flex items-center gap-2 text-accent font-medium transition-all duration-300',
             isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
           )}>
-            Explore <ArrowRight className="h-4 w-4" />
+            {t('destinations.card.explore')} <ArrowRight className="h-4 w-4" />
           </div>
         </div>
       </Link>
@@ -94,7 +96,7 @@ export function DestinationCard({ destination, variant = 'default', className }:
           </p>
         </div>
         <div className="text-right">
-          <span className="text-xs text-muted-foreground">from</span>
+          <span className="text-xs text-muted-foreground">{t('common.from')}</span>
           <p className="font-bold text-foreground">{formatCurrency(destination.priceFrom, destination.currency)}</p>
         </div>
       </Link>
@@ -140,7 +142,7 @@ export function DestinationCard({ destination, variant = 'default', className }:
             <span className="text-muted-foreground text-sm">({destination.reviewCount})</span>
           </div>
           <div>
-            <span className="text-sm text-muted-foreground">from </span>
+            <span className="text-sm text-muted-foreground">{t('common.from')} </span>
             <span className="font-bold text-foreground">{formatCurrency(destination.priceFrom, destination.currency)}</span>
           </div>
         </div>
