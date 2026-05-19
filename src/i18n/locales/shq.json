@@ -302,9 +302,44 @@
   "packages": {
     "page": {
       "title": "Paketa udhëtimi",
-      "subtitle": "Paketa gjithëpërfshirëse me itinerare të përzgjedhura, hotele dhe përvoja.",
+      "subtitle": "Përvoja udhëtimi të përzgjedhura me gjithçka të përfshirë. Zgjidh aventurën tënde dhe ne kujdesemi për detajet.",
       "noResults": "Ende nuk ka paketa që përputhen me filtrat e tu.",
-      "allCategories": "Të gjitha kategoritë"
+      "allCategories": "Të gjitha kategoritë",
+      "categories": {
+        "all": "Të gjitha paketat",
+        "beach": "Plazh dhe ishuj",
+        "cultural": "Tura kulturore",
+        "adventure": "Aventurë"
+      },
+      "featuredPackage": "Paketë e veçantë",
+      "viewPackage": "Shiko paketën",
+      "bestSeller": "Më e shituar",
+      "saveAmount": "Kurse {{amount}}",
+      "viewDetails": "Shiko detajet",
+      "includes": "Përfshin:",
+      "moreCount": "+{{count}} të tjera",
+      "perPerson": "/person",
+      "showingForDestination": "Po shfaqen paketat për destinacionin e zgjedhur.",
+      "whyBook": {
+        "title": "Pse të rezervosh një paketë?",
+        "subtitle": "Paketa udhëtimi gjithëpërfshirëse, krijuar të të japin vlerën dhe përvojën më të mirë",
+        "bestValue": {
+          "title": "Vlera më e mirë",
+          "description": "Kurse deri në 30% krahasuar me rezervime të veçanta"
+        },
+        "noHiddenFees": {
+          "title": "Pa kosto të fshehura",
+          "description": "Të gjitha taksat dhe tarifat janë të përfshira në çmim"
+        },
+        "clearConditions": {
+          "title": "Kushte të qarta",
+          "description": "Rregullat e anulimit dhe ndryshimit konfirmohen për çdo ofertë"
+        },
+        "support": {
+          "title": "Mbështetje 24/7",
+          "description": "Ndihmë ekspertësh gjatë gjithë udhëtimit"
+        }
+      }
     },
     "category": {
       "all": "Të gjitha",

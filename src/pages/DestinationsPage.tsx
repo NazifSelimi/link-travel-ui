@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { DestinationCard, DestinationFilters } from '@/components/destinations';
 import type { DestinationFilters as FiltersType } from '@/types';
 import { useGetDestinationsQuery } from '@/store/linktravelApi';
 
 export default function DestinationsPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState<FiltersType>({
     search: searchParams.get('destination') || '',
@@ -44,11 +46,10 @@ export default function DestinationsPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground">
-              Explore Destinations
+              {t('destinations.page.title')}
             </h1>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-              From ancient cities to pristine beaches, discover your perfect getaway 
-              from our curated collection of extraordinary destinations.
+              {t('destinations.page.subtitle')}
             </p>
           </div>
         </div>
@@ -83,10 +84,10 @@ export default function DestinationsPage() {
           ) : (
             <div className="text-center py-20">
               <p className="text-lg text-muted-foreground">
-                No destinations found matching your criteria.
+                {t('destinations.page.noResults')}
               </p>
               <p className="text-sm text-muted-foreground mt-2">
-                Try adjusting your filters or search terms.
+                {t('destinations.page.tryAdjust')}
               </p>
             </div>
           )}

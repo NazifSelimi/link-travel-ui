@@ -302,9 +302,44 @@
   "packages": {
     "page": {
       "title": "Travel Packages",
-      "subtitle": "All-inclusive packages with curated itineraries, hotels, and experiences.",
+      "subtitle": "Curated travel experiences with everything included. Choose your adventure and let us handle the details.",
       "noResults": "No packages match your filters yet.",
-      "allCategories": "All Categories"
+      "allCategories": "All Categories",
+      "categories": {
+        "all": "All Packages",
+        "beach": "Beach & Islands",
+        "cultural": "Cultural Tours",
+        "adventure": "Adventure"
+      },
+      "featuredPackage": "Featured Package",
+      "viewPackage": "View Package",
+      "bestSeller": "Best Seller",
+      "saveAmount": "Save {{amount}}",
+      "viewDetails": "View Details",
+      "includes": "Includes:",
+      "moreCount": "+{{count}} more",
+      "perPerson": "/person",
+      "showingForDestination": "Showing packages for the selected destination.",
+      "whyBook": {
+        "title": "Why Book a Package?",
+        "subtitle": "All-inclusive travel packages designed to give you the best value and experience",
+        "bestValue": {
+          "title": "Best Value",
+          "description": "Save up to 30% compared to booking separately"
+        },
+        "noHiddenFees": {
+          "title": "No Hidden Fees",
+          "description": "All taxes and fees included in the price"
+        },
+        "clearConditions": {
+          "title": "Clear Conditions",
+          "description": "Cancellation and change rules are confirmed per offer"
+        },
+        "support": {
+          "title": "24/7 Support",
+          "description": "Expert assistance throughout your journey"
+        }
+      }
     },
     "category": {
       "all": "All",

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { HotelCard, HotelFilters } from '@/components/hotels';
 import type { HotelFilters as FiltersType } from '@/types';
 import { useGetHotelsQuery } from '@/store/linktravelApi';
 
 export default function HotelsPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const destinationFilter = searchParams.get('destination');
 
@@ -46,11 +48,10 @@ export default function HotelsPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground">
-              Find Your Perfect Stay
+              {t('hotels.page.title')}
             </h1>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-              From boutique retreats to luxury resorts, discover handpicked accommodations 
-              that promise comfort, style, and unforgettable experiences.
+              {t('hotels.page.subtitle')}
             </p>
           </div>
         </div>
@@ -85,10 +86,10 @@ export default function HotelsPage() {
           ) : (
             <div className="text-center py-20">
               <p className="text-lg text-muted-foreground">
-                No hotels found matching your criteria.
+                {t('hotels.page.noResults')}
               </p>
               <p className="text-sm text-muted-foreground mt-2">
-                Try adjusting your filters or search terms.
+                {t('hotels.page.tryAdjust')}
               </p>
             </div>
           )}
