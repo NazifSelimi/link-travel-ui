@@ -419,21 +419,82 @@
   },
   "bookingConfirmation": {
     "loading": "Po ngarkohet rezervimi…",
-    "notFound": "Rezervimi nuk u gjet",
-    "notFoundBody": "Rezervimi që po kërkoje nuk mund të ngarkohet. Të lutem provo përsëri nga rezervimet e tua ose fillo një rezervim të ri.",
-    "backToHome": "Mbrapa te ballina",
-    "browseHotels": "Shfleto hotelet",
-    "title": "Rezervimi u ruajt",
-    "bookingReference": "Numri i rezervimit",
-    "summary": "Përmbledhja e rezervimit",
-    "nextSteps": "Hapat e ardhshëm",
-    "needHelp": "Të nevojitet ndihmë?",
-    "callUs": "Na telefono",
-    "emailUs": "Na shkruaj email"
+    "notFound": "Konfirmimi i rezervimit",
+    "notFoundBody": "Nuk mundëm të ngarkojmë rezervimin nga sesioni lokal.",
+    "reference": "Numri:",
+    "returnHome": "Mbrapa te ballina",
+    "contactSupport": "Kontakto mbështetjen",
+    "title": "Rezervimi u prit!",
+    "subtitleBefore": "Kërkesa jote për rezervim u ruajt me sukses. Ekipi ynë do të kontaktojë",
+    "subtitleAfter": "për të konfirmuar disponueshmërinë, çmimin përfundimtar dhe hapat e pagesës.",
+    "bookingReferenceLabel": "Numri i rezervimit",
+    "checkInLabel": "Mbërritja",
+    "checkInTime": "Nga ora 15:00",
+    "checkOutLabel": "Largimi",
+    "checkOutTime": "Deri në orën 11:00",
+    "guestsLabel": "Mysafirë",
+    "adultsSuffix": "Të rritur",
+    "nightsSuffix": "Net",
+    "reservationSummary": "Përmbledhja e rezervimit",
+    "quotedTotal": "Totali i ofertës",
+    "quotedTotalNote": "Kjo është një ofertë e vlerësuar për kërkesën. Nuk është pranuar pagesë online.",
+    "agencyFollowUp": "Ndjekje nga agjencia",
+    "agencyFollowUpFallback": "Agjencia do të konfirmojë detajet e takimit",
+    "destinationUnavailable": "Destinacioni nuk është i disponueshëm",
+    "roomUnavailable": "Detajet e dhomës nuk janë të disponueshme",
+    "packageBooking": "Rezervim pakete",
+    "travelBooking": "Rezervim udhëtimi",
+    "printConfirmation": "Printo konfirmimin",
+    "emailAgency": "Dërgo email agjencisë",
+    "travelConditions": "Kushtet e udhëtimit",
+    "importantInfo": "Informacion i rëndësishëm",
+    "important": {
+      "p1": "Link Travel do të të kontaktojë para se rezervimi të konsiderohet i konfirmuar",
+      "p2": "Nevojitet një dokument i vlefshëm (kartë identiteti ose pasaportë) për të gjithë mysafirët",
+      "p3": "Pagesa nuk kryhet online dhe duhet të organizohet direkt me agjencinë",
+      "p4": "Ndryshimet, rregullat e anulimit dhe afatet ndjekin kushtet zyrtare të udhëtimit dhe ofertën e zgjedhur"
+    },
+    "returnToHome": "Mbrapa te ballina"
   },
   "contact": {
-    "title": "Na kontakto",
-    "subtitle": "Jemi këtu për çdo pyetje rreth udhëtimit tënd.",
+    "title": "Kontakto Link Travel",
+    "subtitle": "Për Stamboll, Shqipëri, Tunizi dhe oferta të tjera sezonale, na shkruani direkt. Ekipi ynë do t'ju kthejë përgjigje me çmim aktual dhe disponueshmëri.",
+    "cards": {
+      "findUs": "Na vizito",
+      "phone": "Telefon / WhatsApp / Viber",
+      "email": "Email",
+      "quickBooking": "Rezervime të shpejta",
+      "quickBookingLine1": "Na dërgo kërkesën tënde",
+      "quickBookingLine2": "Do të të kontaktojmë për konfirmim",
+      "quickBookingLine3": "Oferta aktuale sipas disponueshmërisë"
+    },
+    "formTitle": "Dërgo kërkesën tënde",
+    "subjectOptions": {
+      "booking": "Rezervim hoteli",
+      "package": "Paketë udhëtimi",
+      "flight": "Ofertë avioni",
+      "summer": "Pushime verore",
+      "other": "Tjetër"
+    },
+    "mapTitle": "Lokacioni ynë",
+    "moreQuestions": "Ke më shumë pyetje?",
+    "moreQuestionsBody": "Na kontakto direkt për ofertën më të fundit. Çmimet janë aktuale dhe mund të ndryshojnë sipas datës dhe disponueshmërisë.",
+    "sendEmail": "Dërgo email",
+    "submitButton": "Dërgo kërkesën",
+    "submitting": "Duke dërguar…",
+    "sentTitle": "Kërkesa u dërgua!",
+    "sentBody": "Faleminderit. Link Travel do të të kontaktojë me çmim aktual dhe hapat e ardhshëm.",
+    "sendAnother": "Dërgo një tjetër kërkesë",
+    "nameLabel": "Emri dhe Mbiemri *",
+    "namePlaceholder": "Emri yt",
+    "emailLabel": "Email *",
+    "phoneLabel": "Telefon / WhatsApp",
+    "subjectLabel": "Lloji i kërkesës *",
+    "subjectPlaceholder": "Zgjidh një temë",
+    "messageLabel": "Mesazhi *",
+    "messagePlaceholder": "Shkruaj destinacionin, datën, numrin e personave dhe hotelin nëse e ke zgjedhur…",
+    "successToast": "Mesazhi yt u dërgua me sukses.",
+    "errorToast": "Mesazhi nuk u dërgua. Provo përsëri.",
     "form": {
       "name": "Emri",
       "namePlaceholder": "Emri yt",
@@ -461,16 +522,66 @@
   },
   "about": {
     "title": "Rreth LinkTravel",
-    "subtitle": "Një agjenci udhëtimi nga Gostivari që kujdeset për udhëtimin tënd nga fillimi në fund.",
+    "subtitle": "Oferta aktuale, shërbim personal dhe rezervime të shpejta nga Gostivari.",
     "intro": "LinkTravel përzgjedh destinacione, hotele dhe paketa të përshtatura për udhëtarët nga Maqedonia e Veriut, Shqipëria, Kosova dhe rajoni i gjerë. Çdo rezervim ndiqet personalisht — me telefon, WhatsApp ose në zyrën tonë.",
     "valuesTitle": "Në çfarë fokusohemi",
     "ctaTitle": "Planifiko udhëtimin tënd të radhës me ne",
-    "ctaButton": "Shiko destinacionet"
+    "ctaButton": "Shiko destinacionet",
+    "storyTitle": "Historia jonë",
+    "story": {
+      "p1": "Link Travel është agjenci që komunikon drejtpërdrejt, shpejt dhe qartë. Ne fokusohemi tek ofertat reale, çmimet aktuale dhe ndihma personale për çdo klient që kërkon pushime, hotel ose udhëtim me avion.",
+      "p2": "Nga Stambolli deri në bregdetin shqiptar dhe ofertat sezonale për Tunizi, prezantimi ynë bazohet në informacione konkrete: data nisjeje, lloji i shërbimit, çfarë përfshihet dhe si mund të rezervoni menjëherë.",
+      "p3": "Pika jonë e fortë është kontakti i afërt me klientin në telefon, WhatsApp, Viber dhe email, me qëllim që kërkesa të kthehet sa më shpejt në një rezervim të konfirmuar."
+    },
+    "values": {
+      "title": "Vlerat tona",
+      "subtitle": "Parimet që udhëheqin çdo gjë që bëjmë në LinkTravel",
+      "passion": {
+        "title": "Pasion për udhëtimin",
+        "description": "Besojmë se udhëtimi i transformon jetët dhe krijon kujtime të paharrueshme."
+      },
+      "trust": {
+        "title": "Besim dhe besueshmëri",
+        "description": "Siguria dhe kënaqësia jote janë prioriteti ynë kryesor."
+      },
+      "personal": {
+        "title": "Shërbim i personalizuar",
+        "description": "Çdo udhëtim është i përshtatur sipas preferencave të tua unike."
+      },
+      "excellence": {
+        "title": "Përsosmëri",
+        "description": "Bashkëpunojmë vetëm me hotelet dhe ofruesit më të mirë të shërbimeve."
+      }
+    },
+    "awards": {
+      "title": "Njohje dhe çmime",
+      "trusted": {
+        "title": "Planifikim i besueshëm i udhëtimeve",
+        "description": "Përvoja dhe akomodime të përzgjedhura me kujdes"
+      },
+      "customerFirst": {
+        "title": "Mbështetje e fokusuar te klienti",
+        "description": "Përgjigje të shpejta para dhe pas rezervimit"
+      },
+      "regional": {
+        "title": "Ekspertizë rajonale",
+        "description": "Njohuri të fokusuara mbi destinacionet në rajon"
+      }
+    }
   },
   "policy": {
     "title": "Kushtet e udhëtimit",
     "subtitle": "Si funksionojnë rezervimet, pagesat dhe anulimet në Link Travel.",
-    "openPdf": "Hap kushtet e plota (PDF)"
+    "badge": "Kushtet e Link Travel",
+    "heroTitle": "Kushtet e Përgjithshme të Udhëtimit",
+    "heroSubtitle": "Këto kushte shpjegojnë si trajtohen kërkesat e udhëtimit, konfirmimet, ndryshimet, anulimet, dokumentet dhe ndjekja nga agjencia. PDF-ja është dokumenti zyrtar.",
+    "openPdf": "Hap PDF-në zyrtare",
+    "downloadPdf": "Shkarko PDF-në",
+    "noticeTitle": "Njoftim i rëndësishëm për rezervime",
+    "noticeBody": "Link Travel aktualisht e përdor këtë faqe vetëm për kërkesa rezervimi. Këtu nuk pranohet pagesë me kartë ose pagesë online.",
+    "needHelp": "Të nevojitet ndihmë?",
+    "needHelpBody": "Nëse një udhëtar ka pyetje për kushtet, çmimin përfundimtar, afatin e pagesës, dokumentet ose rregullat e anulimit, duhet të kontaktojë Link Travel para se të paguajë.",
+    "contactAgency": "Kontakto agjencinë"
   },
   "notFound": {
     "title": "Faqja nuk u gjet",

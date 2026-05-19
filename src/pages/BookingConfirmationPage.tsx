@@ -3,10 +3,12 @@ import { format } from 'date-fns';
 import {
   CheckCircle2, Calendar, MapPin, Users, Mail, Download, Printer, Home, Phone,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useGetBookingQuery } from '@/store/linktravelApi';
 import { agencyContact, travelPolicyPdfPath } from '@/lib/policy';
 
 export default function BookingConfirmationPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const bookingId = searchParams.get('id') || '';
   const { data: reservation, isLoading: loading } = useGetBookingQuery(bookingId, {
@@ -31,13 +33,13 @@ export default function BookingConfirmationPage() {
       <div className="min-h-screen bg-muted/30 py-12">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-xl border border-border bg-card p-8 text-center">
-            <h1 className="font-serif text-3xl font-bold text-foreground">Reservation confirmation</h1>
+            <h1 className="font-serif text-3xl font-bold text-foreground">{t('bookingConfirmation.notFound')}</h1>
             <p className="mt-3 text-muted-foreground">
-              We could not load a reservation from local session state.
+              {t('bookingConfirmation.notFoundBody')}
             </p>
             {bookingId && (
               <p className="mt-2 text-sm text-muted-foreground">
-                Reference: <span className="font-medium text-foreground">{bookingId}</span>
+                {t('bookingConfirmation.reference')} <span className="font-medium text-foreground">{bookingId}</span>
               </p>
             )}
             <div className="mt-6 flex justify-center gap-3">
@@ -45,13 +47,13 @@ export default function BookingConfirmationPage() {
                 to="/"
                 className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Return Home
+                {t('bookingConfirmation.returnHome')}
               </Link>
               <Link
                 to="/contact"
                 className="inline-flex items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
               >
-                Contact Support
+                {t('bookingConfirmation.contactSupport')}
               </Link>
             </div>
           </div>
@@ -83,17 +85,17 @@ export default function BookingConfirmationPage() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
             <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <h1 className="font-serif text-3xl font-bold text-foreground">Reservation Received!</h1>
+          <h1 className="font-serif text-3xl font-bold text-foreground">{t('bookingConfirmation.title')}</h1>
           <p className="mt-2 text-muted-foreground">
-            Your reservation request has been saved successfully. Our team will contact{' '}
+            {t('bookingConfirmation.subtitleBefore')}{' '}
             <span className="font-medium text-foreground">{booking.email}</span>
-            {' '}to confirm availability, final price, and payment steps.
+            {' '}{t('bookingConfirmation.subtitleAfter')}
           </p>
         </div>
 
         {/* Booking Reference */}
         <div className="mb-6 rounded-xl border border-border bg-card p-6 text-center">
-          <p className="text-sm text-muted-foreground">Booking Reference</p>
+          <p className="text-sm text-muted-foreground">{t('bookingConfirmation.bookingReferenceLabel')}</p>
           <p className="text-2xl font-bold text-primary tracking-wider">{booking.id}</p>
         </div>
 
@@ -105,22 +107,22 @@ export default function BookingConfirmationPage() {
               {(booking.package?.image || booking.hotel?.image) && (
                 <img
                   src={booking.package?.image || booking.hotel?.image}
-                  alt={booking.package?.name || booking.hotel?.name || 'Travel booking'}
+                  alt={booking.package?.name || booking.hotel?.name || t('bookingConfirmation.travelBooking')}
                   className="h-full w-full object-cover"
                 />
               )}
             </div>
             <div>
-              <h2 className="font-semibold text-lg text-foreground">{booking.package?.name || booking.hotel?.name || 'Travel booking'}</h2>
+              <h2 className="font-semibold text-lg text-foreground">{booking.package?.name || booking.hotel?.name || t('bookingConfirmation.travelBooking')}</h2>
               <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
                 <MapPin className="h-4 w-4" />
                 {booking.package?.destinationName
                   || booking.package?.destination?.name
                   || (booking.hotel?.destination?.name
                   ? `${booking.hotel.destination.name}, ${booking.hotel.destination.country}`
-                  : booking.hotel?.address || 'Destination unavailable')}
+                  : booking.hotel?.address || t('bookingConfirmation.destinationUnavailable'))}
               </p>
-              <p className="text-sm text-muted-foreground mt-1">{booking.room?.name || (booking.package ? 'Package booking' : 'Room details unavailable')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{booking.room?.name || (booking.package ? t('bookingConfirmation.packageBooking') : t('bookingConfirmation.roomUnavailable'))}</p>
             </div>
           </div>
 
@@ -132,25 +134,25 @@ export default function BookingConfirmationPage() {
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <Calendar className="h-5 w-5 text-primary" />
               </div>
-              <p className="text-xs text-muted-foreground">Check-in</p>
+              <p className="text-xs text-muted-foreground">{t('bookingConfirmation.checkInLabel')}</p>
               <p className="font-medium text-foreground">{format(booking.checkIn, 'MMM d, yyyy')}</p>
-              <p className="text-xs text-muted-foreground">From 3:00 PM</p>
+              <p className="text-xs text-muted-foreground">{t('bookingConfirmation.checkInTime')}</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <Calendar className="h-5 w-5 text-primary" />
               </div>
-              <p className="text-xs text-muted-foreground">Check-out</p>
+              <p className="text-xs text-muted-foreground">{t('bookingConfirmation.checkOutLabel')}</p>
               <p className="font-medium text-foreground">{format(booking.checkOut, 'MMM d, yyyy')}</p>
-              <p className="text-xs text-muted-foreground">Until 11:00 AM</p>
+              <p className="text-xs text-muted-foreground">{t('bookingConfirmation.checkOutTime')}</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <Users className="h-5 w-5 text-primary" />
               </div>
-              <p className="text-xs text-muted-foreground">Guests</p>
-              <p className="font-medium text-foreground">{booking.guests} Adults</p>
-              <p className="text-xs text-muted-foreground">{booking.nights} Nights</p>
+              <p className="text-xs text-muted-foreground">{t('bookingConfirmation.guestsLabel')}</p>
+              <p className="font-medium text-foreground">{booking.guests} {t('bookingConfirmation.adultsSuffix')}</p>
+              <p className="text-xs text-muted-foreground">{booking.nights} {t('bookingConfirmation.nightsSuffix')}</p>
             </div>
           </div>
 
@@ -158,13 +160,13 @@ export default function BookingConfirmationPage() {
 
           {/* Reservation Summary */}
           <div className="p-6">
-            <h3 className="font-semibold text-foreground mb-4">Reservation Summary</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t('bookingConfirmation.reservationSummary')}</h3>
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Quoted Total</span>
+              <span className="text-muted-foreground">{t('bookingConfirmation.quotedTotal')}</span>
               <span className="text-2xl font-bold text-foreground">€{booking.total.toFixed(2)}</span>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              This is an estimated quote for the request. No online payment has been collected.
+              {t('bookingConfirmation.quotedTotalNote')}
             </p>
           </div>
 
@@ -172,8 +174,8 @@ export default function BookingConfirmationPage() {
 
           {/* Hotel Contact */}
           <div className="p-6 bg-muted/50">
-            <h3 className="font-semibold text-foreground mb-2">Agency Follow-Up</h3>
-            <p className="text-sm text-muted-foreground">{booking.hotel?.address || booking.package?.meetingPoint || 'Agency will confirm meeting details'}</p>
+            <h3 className="font-semibold text-foreground mb-2">{t('bookingConfirmation.agencyFollowUp')}</h3>
+            <p className="text-sm text-muted-foreground">{booking.hotel?.address || booking.package?.meetingPoint || t('bookingConfirmation.agencyFollowUpFallback')}</p>
             <p className="text-sm text-muted-foreground flex items-center gap-2 mt-2">
               <Phone className="h-4 w-4" />
               {agencyContact.phone}
@@ -188,14 +190,14 @@ export default function BookingConfirmationPage() {
             className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-border text-sm font-medium hover:bg-muted transition-colors"
           >
             <Printer className="h-4 w-4 mr-2" />
-            Print Confirmation
+            {t('bookingConfirmation.printConfirmation')}
           </button>
           <a
             href={`mailto:${agencyContact.email}?subject=Reservation%20${booking.id}`}
             className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-border text-sm font-medium hover:bg-muted transition-colors"
           >
             <Mail className="h-4 w-4 mr-2" />
-            Email Agency
+            {t('bookingConfirmation.emailAgency')}
           </a>
           <a
             href={travelPolicyPdfPath}
@@ -204,30 +206,20 @@ export default function BookingConfirmationPage() {
             className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-border text-sm font-medium hover:bg-muted transition-colors"
           >
             <Download className="h-4 w-4 mr-2" />
-            Travel Conditions
+            {t('bookingConfirmation.travelConditions')}
           </a>
         </div>
 
         {/* Important Info */}
         <div className="mt-8 rounded-xl border border-border bg-card p-6">
-          <h3 className="font-semibold text-foreground mb-4">Important Information</h3>
+          <h3 className="font-semibold text-foreground mb-4">{t('bookingConfirmation.importantInfo')}</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-              Link Travel will contact you before the reservation is treated as confirmed
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-              A valid ID or passport is required for all guests
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-              Payment is not collected online and must be arranged directly with the agency
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-              Changes, cancellation rules, and deadlines follow the official travel conditions and the selected offer
-            </li>
+            {(['p1', 'p2', 'p3', 'p4'] as const).map((key) => (
+              <li key={key} className="flex items-start gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                {t(`bookingConfirmation.important.${key}`)}
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -238,7 +230,7 @@ export default function BookingConfirmationPage() {
             className="inline-flex items-center px-6 py-3 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
           >
             <Home className="h-4 w-4 mr-2" />
-            Return to Home
+            {t('bookingConfirmation.returnToHome')}
           </Link>
         </div>
       </div>

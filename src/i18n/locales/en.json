@@ -419,21 +419,82 @@
   },
   "bookingConfirmation": {
     "loading": "Loading booking…",
-    "notFound": "Booking not found",
-    "notFoundBody": "The booking you were looking for could not be loaded. Please try again from your reservations or start a new booking.",
-    "backToHome": "Back to Home",
-    "browseHotels": "Browse Hotels",
-    "title": "Booking Saved",
-    "bookingReference": "Booking reference",
-    "summary": "Booking summary",
-    "nextSteps": "Next steps",
-    "needHelp": "Need help?",
-    "callUs": "Call us",
-    "emailUs": "Email us"
+    "notFound": "Reservation confirmation",
+    "notFoundBody": "We could not load a reservation from local session state.",
+    "reference": "Reference:",
+    "returnHome": "Return Home",
+    "contactSupport": "Contact Support",
+    "title": "Reservation Received!",
+    "subtitleBefore": "Your reservation request has been saved successfully. Our team will contact",
+    "subtitleAfter": "to confirm availability, final price, and payment steps.",
+    "bookingReferenceLabel": "Booking Reference",
+    "checkInLabel": "Check-in",
+    "checkInTime": "From 3:00 PM",
+    "checkOutLabel": "Check-out",
+    "checkOutTime": "Until 11:00 AM",
+    "guestsLabel": "Guests",
+    "adultsSuffix": "Adults",
+    "nightsSuffix": "Nights",
+    "reservationSummary": "Reservation Summary",
+    "quotedTotal": "Quoted Total",
+    "quotedTotalNote": "This is an estimated quote for the request. No online payment has been collected.",
+    "agencyFollowUp": "Agency Follow-Up",
+    "agencyFollowUpFallback": "Agency will confirm meeting details",
+    "destinationUnavailable": "Destination unavailable",
+    "roomUnavailable": "Room details unavailable",
+    "packageBooking": "Package booking",
+    "travelBooking": "Travel booking",
+    "printConfirmation": "Print Confirmation",
+    "emailAgency": "Email Agency",
+    "travelConditions": "Travel Conditions",
+    "importantInfo": "Important Information",
+    "important": {
+      "p1": "Link Travel will contact you before the reservation is treated as confirmed",
+      "p2": "A valid ID or passport is required for all guests",
+      "p3": "Payment is not collected online and must be arranged directly with the agency",
+      "p4": "Changes, cancellation rules, and deadlines follow the official travel conditions and the selected offer"
+    },
+    "returnToHome": "Return to Home"
   },
   "contact": {
-    "title": "Get in Touch",
-    "subtitle": "We're here to help with any questions about your trip.",
+    "title": "Contact Link Travel",
+    "subtitle": "For Istanbul, Albania, Tunisia, and other seasonal offers, write to us directly. Our team will reply with a current price and availability.",
+    "cards": {
+      "findUs": "Visit us",
+      "phone": "Phone / WhatsApp / Viber",
+      "email": "Email",
+      "quickBooking": "Fast bookings",
+      "quickBookingLine1": "Send us your request",
+      "quickBookingLine2": "We'll get back to confirm",
+      "quickBookingLine3": "Live offers based on availability"
+    },
+    "formTitle": "Send your request",
+    "subjectOptions": {
+      "booking": "Hotel reservation",
+      "package": "Travel package",
+      "flight": "Flight offer",
+      "summer": "Summer holidays",
+      "other": "Other"
+    },
+    "mapTitle": "Our location",
+    "moreQuestions": "Have more questions?",
+    "moreQuestionsBody": "Contact us directly for the latest offer. Prices are current and may change with date and availability.",
+    "sendEmail": "Send email",
+    "submitButton": "Send request",
+    "submitting": "Sending…",
+    "sentTitle": "Request sent!",
+    "sentBody": "Thank you. Link Travel will contact you with a current price and next steps.",
+    "sendAnother": "Send another request",
+    "nameLabel": "First and Last Name *",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email *",
+    "phoneLabel": "Phone / WhatsApp",
+    "subjectLabel": "Request type *",
+    "subjectPlaceholder": "Select a subject",
+    "messageLabel": "Message *",
+    "messagePlaceholder": "Tell us the destination, date, number of people, and the hotel if you've chosen one…",
+    "successToast": "Your message has been sent successfully.",
+    "errorToast": "Failed to send your message. Please try again.",
     "form": {
       "name": "Name",
       "namePlaceholder": "Your name",
@@ -461,16 +522,66 @@
   },
   "about": {
     "title": "About LinkTravel",
-    "subtitle": "A travel agency from Gostivar that handles your trip end-to-end.",
+    "subtitle": "Current offers, personal service, and fast bookings from Gostivar.",
     "intro": "LinkTravel curates destinations, hotels, and packages tailored to travelers from North Macedonia, Albania, Kosovo, and the wider region. Every reservation is followed up personally — by phone, WhatsApp, or in our office.",
     "valuesTitle": "What we focus on",
     "ctaTitle": "Plan your next trip with us",
-    "ctaButton": "View destinations"
+    "ctaButton": "View destinations",
+    "storyTitle": "Our Story",
+    "story": {
+      "p1": "Link Travel is an agency that communicates directly, quickly, and clearly. We focus on real offers, current prices, and personal help for every client looking for a vacation, hotel, or flight.",
+      "p2": "From Istanbul to the Albanian Riviera and seasonal Tunisia offers, our presentation is based on concrete information: departure dates, the type of service, what's included, and how you can book right away.",
+      "p3": "Our strength is the close contact with the client — by phone, WhatsApp, Viber, or email — so that a request becomes a confirmed reservation as quickly as possible."
+    },
+    "values": {
+      "title": "Our Values",
+      "subtitle": "The principles that guide everything we do at LinkTravel",
+      "passion": {
+        "title": "Passion for Travel",
+        "description": "We believe travel transforms lives and creates lasting memories."
+      },
+      "trust": {
+        "title": "Trust & Reliability",
+        "description": "Your safety and satisfaction are our top priorities."
+      },
+      "personal": {
+        "title": "Personalized Service",
+        "description": "Every journey is tailored to your unique preferences."
+      },
+      "excellence": {
+        "title": "Excellence",
+        "description": "We partner only with the best hotels and service providers."
+      }
+    },
+    "awards": {
+      "title": "Recognition & Awards",
+      "trusted": {
+        "title": "Trusted Travel Planning",
+        "description": "Carefully selected experiences and stays"
+      },
+      "customerFirst": {
+        "title": "Customer-first Support",
+        "description": "Responsive guidance before and after booking"
+      },
+      "regional": {
+        "title": "Regional Expertise",
+        "description": "Focused knowledge of destinations across the region"
+      }
+    }
   },
   "policy": {
     "title": "Travel Policy",
     "subtitle": "How reservations, payments, and cancellations work at Link Travel.",
-    "openPdf": "Open the full conditions (PDF)"
+    "badge": "Link Travel Policy",
+    "heroTitle": "General Travel Conditions",
+    "heroSubtitle": "These terms explain how travel requests, confirmations, changes, cancellations, documents, and agency follow-up are handled. The PDF is the official policy document.",
+    "openPdf": "Open Official PDF",
+    "downloadPdf": "Download PDF",
+    "noticeTitle": "Important booking notice",
+    "noticeBody": "Link Travel currently uses this website for reservation requests only. No card payment or online payment is collected here.",
+    "needHelp": "Need help?",
+    "needHelpBody": "If a traveler has questions about the terms, final price, payment deadline, documents, or cancellation rules, they should contact Link Travel before paying.",
+    "contactAgency": "Contact Agency"
   },
   "notFound": {
     "title": "Page not found",
