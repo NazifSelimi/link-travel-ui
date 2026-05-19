@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { addDays, differenceInDays, format } from 'date-fns';
-import { Calendar, Check, ChevronLeft, Info, MapPin, Shield, Star, Users } from 'lucide-react';
+import { Check, ChevronLeft, Info, MapPin, Shield, Star } from 'lucide-react';
 import { Checkbox, DatePicker, Input, Select, message } from 'antd';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '@/store/hooks';
 import {
   useCreateBookingMutation,
@@ -13,15 +14,15 @@ import {
 import { travelPolicyPdfPath } from '@/lib/policy';
 import { cn } from '@/lib/utils';
 
-const defaultGuestOptions = Array.from({ length: 12 }, (_, index) => ({
-  value: String(index + 1),
-  label: `${index + 1} ${index === 0 ? 'Guest' : 'Guests'}`,
-}));
-
 export default function BookingPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const defaultGuestOptions = Array.from({ length: 12 }, (_, index) => ({
+    value: String(index + 1),
+    label: `${index + 1} ${t('home.hero.guest', { count: index + 1 })}`,
+  }));
 
   const hotelId = searchParams.get('hotel') || '';
   const roomId = searchParams.get('room') || '';
@@ -60,7 +61,7 @@ export default function BookingPage() {
     : selectedRoom?.name || hotel?.address || 'Hotel room';
   const bookingImage = travelPackage?.image || hotel?.image || '/placeholder.svg';
   const backPath = isPackageBooking ? `/packages/${packageId}` : `/hotels/${hotelId}`;
-  const backLabel = isPackageBooking ? 'Back to package' : 'Back to hotel';
+  const backLabel = isPackageBooking ? t('booking.backToPackage') : t('booking.backToHotel');
   const loading = (hotelId && hotelLoading) || (packageId && packageLoading);
   const isStep1Valid = Boolean(checkIn && checkOut && guests);
   const isStep2Valid = Boolean(guestDetails.firstName && guestDetails.lastName && guestDetails.email && guestDetails.phone);
@@ -71,12 +72,12 @@ export default function BookingPage() {
 
   const handleSubmit = async () => {
     if ((!isPackageBooking && (!hotelId || !selectedRoom)) || (isPackageBooking && !travelPackage) || !checkIn || !checkOut) {
-      message.error('Please complete your booking details first.');
+      message.error(t('booking.completeFirst'));
       return;
     }
 
     if (!isAuthenticated) {
-      message.info('Please sign in to complete your booking.');
+      message.info(t('auth.pleaseSignIn'));
       navigate('/login', {
         replace: true,
         state: { from: isPackageBooking ? `/booking?package=${packageId}` : `/booking?hotel=${hotelId}&room=${selectedRoom?.id}` },
@@ -102,7 +103,7 @@ export default function BookingPage() {
 
       navigate(`/booking/confirmation?id=${reservation.id}`);
     } catch (error) {
-      message.error((error as Error).message || 'Failed to create booking');
+      message.error((error as Error).message || t('booking.failedToCreate'));
     } finally {
       setIsSubmitting(false);
     }
@@ -121,12 +122,12 @@ export default function BookingPage() {
   if (!hotelId && !packageId) {
     return (
       <EmptyBookingState
-        title="Choose a booking first"
-        description="Start from a hotel room or package before continuing to booking."
+        title={t('booking.emptyChooseTitle')}
+        description={t('booking.emptyChooseBody')}
         primaryHref="/hotels"
-        primaryLabel="Browse Hotels"
+        primaryLabel={t('booking.browseHotels')}
         secondaryHref="/packages"
-        secondaryLabel="Browse Packages"
+        secondaryLabel={t('booking.browsePackages')}
       />
     );
   }
@@ -134,10 +135,10 @@ export default function BookingPage() {
   if (hotelId && !hotel) {
     return (
       <EmptyBookingState
-        title="Hotel not found"
-        description="We could not load this hotel for booking. Please start again from the hotels page."
+        title={t('booking.hotelNotFound')}
+        description={t('booking.hotelNotFoundBody')}
         primaryHref="/hotels"
-        primaryLabel="Browse Hotels"
+        primaryLabel={t('booking.browseHotels')}
       />
     );
   }
@@ -145,10 +146,10 @@ export default function BookingPage() {
   if (packageId && !travelPackage) {
     return (
       <EmptyBookingState
-        title="Package not found"
-        description="We could not load this package for booking. Please start again from the packages page."
+        title={t('booking.packageNotFound')}
+        description={t('booking.packageNotFoundBody')}
         primaryHref="/packages"
-        primaryLabel="Browse Packages"
+        primaryLabel={t('booking.browsePackages')}
       />
     );
   }
@@ -156,10 +157,10 @@ export default function BookingPage() {
   if (hotel && !selectedRoom) {
     return (
       <EmptyBookingState
-        title="Room not available"
-        description="The selected room could not be loaded. Please choose another room for this hotel."
+        title={t('booking.roomNotAvailable')}
+        description={t('booking.roomNotAvailableBody')}
         primaryHref={`/hotels/${hotel.id}`}
-        primaryLabel="Back to Hotel"
+        primaryLabel={t('booking.backToHotelButton')}
       />
     );
   }
@@ -187,9 +188,9 @@ export default function BookingPage() {
             ))}
           </div>
           <div className="mt-2 flex justify-center gap-8 text-sm">
-            <span className={step >= 1 ? 'text-foreground' : 'text-muted-foreground'}>Dates & Guests</span>
-            <span className={step >= 2 ? 'text-foreground' : 'text-muted-foreground'}>Guest Details</span>
-            <span className={step >= 3 ? 'text-foreground' : 'text-muted-foreground'}>Review & Confirm</span>
+            <span className={step >= 1 ? 'text-foreground' : 'text-muted-foreground'}>{t('booking.stepDates')}</span>
+            <span className={step >= 2 ? 'text-foreground' : 'text-muted-foreground'}>{t('booking.stepDetails')}</span>
+            <span className={step >= 3 ? 'text-foreground' : 'text-muted-foreground'}>{t('booking.stepReview')}</span>
           </div>
         </div>
 
@@ -197,23 +198,23 @@ export default function BookingPage() {
           <div className="space-y-6 lg:col-span-2">
             {step === 1 ? (
               <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="mb-6 text-lg font-semibold text-foreground">Select dates and guests</h2>
+                <h2 className="mb-6 text-lg font-semibold text-foreground">{t('booking.selectDatesAndGuests')}</h2>
                 <div className="space-y-6">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <DateField
-                      label={isPackageBooking ? 'Preferred start date' : 'Check-in date'}
+                      label={isPackageBooking ? t('booking.preferredStart') : t('booking.checkInDate')}
                       value={checkIn}
                       onChange={setCheckIn}
                     />
                     <DateField
-                      label={isPackageBooking ? 'Preferred return date' : 'Check-out date'}
+                      label={isPackageBooking ? t('booking.preferredReturn') : t('booking.checkOutDate')}
                       value={checkOut}
                       onChange={setCheckOut}
                       minDate={checkIn}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Number of Guests</label>
+                    <label className="text-sm font-medium">{t('booking.numberOfGuests')}</label>
                     <Select
                       value={guests}
                       onChange={setGuests}
@@ -229,41 +230,41 @@ export default function BookingPage() {
 
             {step === 2 ? (
               <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="mb-6 text-lg font-semibold text-foreground">Guest Information</h2>
+                <h2 className="mb-6 text-lg font-semibold text-foreground">{t('booking.guestInformation')}</h2>
                 <div className="space-y-6">
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <InputField label="First Name *" value={guestDetails.firstName} onChange={(value) => handleGuestDetailChange('firstName', value)} placeholder="John" />
-                    <InputField label="Last Name *" value={guestDetails.lastName} onChange={(value) => handleGuestDetailChange('lastName', value)} placeholder="Doe" />
+                    <InputField label={t('booking.firstNameLabel')} value={guestDetails.firstName} onChange={(value) => handleGuestDetailChange('firstName', value)} placeholder="John" />
+                    <InputField label={t('booking.lastNameLabel')} value={guestDetails.lastName} onChange={(value) => handleGuestDetailChange('lastName', value)} placeholder="Doe" />
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <InputField label="Email Address *" type="email" value={guestDetails.email} onChange={(value) => handleGuestDetailChange('email', value)} placeholder="john@example.com" />
-                    <InputField label="Phone Number *" type="tel" value={guestDetails.phone} onChange={(value) => handleGuestDetailChange('phone', value)} placeholder="+389 71 726 726" />
+                    <InputField label={t('booking.emailLabel')} type="email" value={guestDetails.email} onChange={(value) => handleGuestDetailChange('email', value)} placeholder="john@example.com" />
+                    <InputField label={t('booking.phoneLabel')} type="tel" value={guestDetails.phone} onChange={(value) => handleGuestDetailChange('phone', value)} placeholder="+389 71 726 726" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Country</label>
+                    <label className="text-sm font-medium">{t('booking.country')}</label>
                     <Select
                       value={guestDetails.country || undefined}
                       onChange={(value) => handleGuestDetailChange('country', value)}
-                      placeholder="Select country"
+                      placeholder={t('booking.selectCountry')}
                       className="w-full"
                       size="large"
                       options={[
-                        { value: 'mk', label: 'North Macedonia' },
-                        { value: 'al', label: 'Albania' },
+                        { value: 'mk', label: t('destinations.filters.countries.northMacedonia') },
+                        { value: 'al', label: t('destinations.filters.countries.albania') },
                         { value: 'xk', label: 'Kosovo' },
                         { value: 'de', label: 'Germany' },
                         { value: 'ch', label: 'Switzerland' },
-                        { value: 'other', label: 'Other' },
+                        { value: 'other', label: t('common.all') },
                       ]}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="specialRequests" className="text-sm font-medium">Special Requests (Optional)</label>
+                    <label htmlFor="specialRequests" className="text-sm font-medium">{t('booking.specialRequests')}</label>
                     <textarea
                       id="specialRequests"
                       value={guestDetails.specialRequests}
                       onChange={(event) => handleGuestDetailChange('specialRequests', event.target.value)}
-                      placeholder="Dates flexibility, children ages, room preferences, flight needs..."
+                      placeholder={t('booking.specialRequestsPlaceholder')}
                       className="flex min-h-[110px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     />
                   </div>
@@ -273,29 +274,29 @@ export default function BookingPage() {
 
             {step === 3 ? (
               <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="mb-6 text-lg font-semibold text-foreground">Review and confirm</h2>
+                <h2 className="mb-6 text-lg font-semibold text-foreground">{t('booking.reviewAndConfirm')}</h2>
                 <div className="space-y-6">
                   <div className="rounded-lg border border-border p-5">
                     <div className="flex items-start gap-3">
                       <Shield className="mt-0.5 h-5 w-5 text-primary" />
                       <div>
-                        <p className="font-medium text-foreground">Booking in progress</p>
+                        <p className="font-medium text-foreground">{t('booking.bookingInProgress')}</p>
                         <p className="mt-1 text-sm text-muted-foreground">
-                          Submitting saves your booking in the system. Link Travel will contact you by phone, and online payment is not charged yet.
+                          {t('booking.bookingInProgressBody')}
                         </p>
                       </div>
                     </div>
                   </div>
 
                   <div className="rounded-lg border border-border bg-muted/30 p-5">
-                    <h3 className="font-medium text-foreground">What you are booking</h3>
+                    <h3 className="font-medium text-foreground">{t('booking.whatYouAreBooking')}</h3>
                     <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                      <SummaryItem label={isPackageBooking ? 'Package' : 'Hotel'} value={bookingTitle} />
-                      <SummaryItem label={isPackageBooking ? 'Travelers' : 'Room'} value={isPackageBooking ? `${guestCount} guests` : selectedRoom?.name} />
-                      <SummaryItem label="Guest" value={`${guestDetails.firstName} ${guestDetails.lastName}`.trim()} />
+                      <SummaryItem label={isPackageBooking ? t('booking.package') : t('booking.hotel')} value={bookingTitle} />
+                      <SummaryItem label={isPackageBooking ? t('booking.travelers') : t('booking.room')} value={isPackageBooking ? `${guestCount} ${t('home.hero.guest', { count: guestCount })}` : selectedRoom?.name} />
+                      <SummaryItem label={t('booking.guest')} value={`${guestDetails.firstName} ${guestDetails.lastName}`.trim()} />
                       <SummaryItem
-                        label="Dates"
-                        value={checkIn && checkOut ? `${format(checkIn, 'MMM d, yyyy')} - ${format(checkOut, 'MMM d, yyyy')}` : 'Select dates'}
+                        label={t('booking.dates')}
+                        value={checkIn && checkOut ? `${format(checkIn, 'MMM d, yyyy')} - ${format(checkOut, 'MMM d, yyyy')}` : t('booking.selectDatesPlaceholder')}
                       />
                     </div>
                   </div>
@@ -303,14 +304,14 @@ export default function BookingPage() {
                   <div className="flex items-start gap-3">
                     <Checkbox checked={agreeTerms} onChange={(event) => setAgreeTerms(event.target.checked)} />
                     <span className="text-sm text-muted-foreground">
-                      I confirm that my guest details are correct and I accept Link Travel&apos;s{' '}
-                      <Link to="/travel-policy" className="text-primary hover:underline">general travel conditions</Link>
-                      {' '}and the offer-specific cancellation/payment rules. I understand payment is handled directly with the agency until online payment is implemented.
+                      {t('booking.termsAcknowledgement')}{' '}
+                      <Link to="/travel-policy" className="text-primary hover:underline">{t('booking.generalConditions')}</Link>
+                      {' '}{t('booking.and')}{' '}{t('booking.termsTail')}
                     </span>
                   </div>
 
                   <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
-                    Your booking will be saved as in progress. When admin confirms it, you will receive a confirmed booking email.
+                    {t('booking.savedNotice')}
                   </div>
                 </div>
               </div>
@@ -323,7 +324,7 @@ export default function BookingPage() {
                 className="inline-flex items-center rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50"
               >
                 <ChevronLeft className="mr-2 h-4 w-4" />
-                Back
+                {t('booking.back')}
               </button>
               {step < 3 ? (
                 <button
@@ -331,7 +332,7 @@ export default function BookingPage() {
                   disabled={(step === 1 && !isStep1Valid) || (step === 2 && !isStep2Valid)}
                   className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
                 >
-                  Continue
+                  {t('booking.continue')}
                 </button>
               ) : (
                 <button
@@ -339,7 +340,7 @@ export default function BookingPage() {
                   disabled={!agreeTerms || isSubmitting}
                   className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Submitting...' : `Save Booking • €${total.toFixed(2)}`}
+                  {isSubmitting ? t('booking.submitting') : `${t('booking.saveBooking')} • €${total.toFixed(2)}`}
                 </button>
               )}
             </div>
@@ -369,17 +370,17 @@ export default function BookingPage() {
               <hr className="my-4 border-border" />
 
               <div className="space-y-2 text-sm">
-                <SummaryRow label={isPackageBooking ? 'Start' : 'Check-in'} value={checkIn ? format(checkIn, 'MMM d, yyyy') : '-'} />
-                <SummaryRow label={isPackageBooking ? 'Return' : 'Check-out'} value={checkOut ? format(checkOut, 'MMM d, yyyy') : '-'} />
-                <SummaryRow label="Guests" value={guests} />
-                {!isPackageBooking ? <SummaryRow label="Nights" value={String(nights)} /> : null}
+                <SummaryRow label={isPackageBooking ? t('booking.start') : t('booking.checkIn')} value={checkIn ? format(checkIn, 'MMM d, yyyy') : '-'} />
+                <SummaryRow label={isPackageBooking ? t('booking.return') : t('booking.checkOut')} value={checkOut ? format(checkOut, 'MMM d, yyyy') : '-'} />
+                <SummaryRow label={t('home.hero.guests')} value={guests} />
+                {!isPackageBooking ? <SummaryRow label={t('booking.nights')} value={String(nights)} /> : null}
               </div>
 
               <hr className="my-4 border-border" />
 
               <div className="space-y-2 text-sm">
                 <SummaryRow
-                  label={isPackageBooking ? `€${travelPackage?.price ?? 0} x ${guestCount} guests` : `€${selectedRoom?.pricePerNight ?? 0} x ${nights} nights`}
+                  label={isPackageBooking ? `€${travelPackage?.price ?? 0} x ${guestCount} ${t('home.hero.guest', { count: guestCount })}` : `€${selectedRoom?.pricePerNight ?? 0} x ${nights} ${t('booking.nights').toLowerCase()}`}
                   value={`€${subtotal.toFixed(2)}`}
                 />
               </div>
@@ -387,17 +388,17 @@ export default function BookingPage() {
               <hr className="my-4 border-border" />
 
               <div className="flex justify-between text-lg font-semibold">
-                <span className="text-foreground">Estimated Total</span>
+                <span className="text-foreground">{t('booking.estimatedTotal')}</span>
                 <span className="text-foreground">€{total.toFixed(2)}</span>
               </div>
 
               <div className="mt-4 space-y-2 text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4" />
-                  <span>No online payment. Agency confirms final price and payment steps.</span>
+                  <span>{t('booking.noOnlinePayment')}</span>
                 </div>
                 <a href={travelPolicyPdfPath} target="_blank" rel="noreferrer" className="inline-flex text-primary hover:underline">
-                  Open general travel conditions
+                  {t('booking.openConditions')}
                 </a>
               </div>
             </div>
@@ -494,14 +495,15 @@ function InputField({
 }
 
 function InfoNotice() {
+  const { t } = useTranslation();
   return (
     <div className="rounded-lg bg-muted/50 p-4">
       <div className="flex items-start gap-3">
         <Info className="mt-0.5 h-5 w-5 text-muted-foreground" />
         <div className="text-sm">
-          <p className="font-medium text-foreground">Booking without online payment</p>
+          <p className="font-medium text-foreground">{t('booking.infoNoticeTitle')}</p>
           <p className="text-muted-foreground">
-            Your booking is saved first. Link Travel confirms availability, final price, and payment details by phone.
+            {t('booking.infoNoticeBody')}
           </p>
         </div>
       </div>
