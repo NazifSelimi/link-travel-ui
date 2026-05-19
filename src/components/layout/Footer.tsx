@@ -2,28 +2,8 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { message } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useSubscribeNewsletterMutation } from '@/store/linktravelApi';
-
-const footerNavigation = {
-  destinations: [
-    { name: 'All Destinations', href: '/destinations' },
-    { name: 'Hotels', href: '/hotels' },
-    { name: 'Packages', href: '/packages' },
-  ],
-  company: [
-    { name: 'About Us', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ],
-  support: [
-    { name: 'Contact', href: '/contact' },
-    { name: 'Booking', href: '/booking' },
-    { name: 'Packages', href: '/packages' },
-  ],
-  legal: [
-    { name: 'Travel Policy', href: '/travel-policy' },
-    { name: 'Contact Support', href: '/contact' },
-  ],
-};
 
 const contactLinks = [
   { name: 'Email', icon: Mail, href: 'mailto:linktravelnmk@gmail.com' },
@@ -32,23 +12,45 @@ const contactLinks = [
 ];
 
 export function Footer() {
+  const { t } = useTranslation();
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribeNewsletter, { isLoading: submitting }] = useSubscribeNewsletterMutation();
+
+  const footerNavigation = {
+    destinations: [
+      { label: t('footer.links.allDestinations'), href: '/destinations' },
+      { label: t('footer.links.hotels'), href: '/hotels' },
+      { label: t('footer.links.packages'), href: '/packages' },
+    ],
+    company: [
+      { label: t('footer.links.aboutUs'), href: '/about' },
+      { label: t('footer.links.contact'), href: '/contact' },
+    ],
+    support: [
+      { label: t('footer.links.contact'), href: '/contact' },
+      { label: t('footer.links.booking'), href: '/booking' },
+      { label: t('footer.links.packages'), href: '/packages' },
+    ],
+    legal: [
+      { label: t('footer.links.travelPolicy'), href: '/travel-policy' },
+      { label: t('footer.links.contactSupport'), href: '/contact' },
+    ],
+  };
 
   const handleNewsletterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!newsletterEmail) {
-      message.error('Please enter your email address.');
+      message.error(t('footer.newsletterPleaseEnterEmail'));
       return;
     }
 
     try {
       await subscribeNewsletter(newsletterEmail).unwrap();
-      message.success('You have been subscribed to the newsletter.');
+      message.success(t('footer.newsletterSubscribed'));
       setNewsletterEmail('');
     } catch (error) {
-      message.error((error as Error).message || 'Failed to subscribe to the newsletter.');
+      message.error((error as Error).message || t('footer.newsletterFailed'));
     }
   };
 
@@ -60,10 +62,10 @@ export function Footer() {
           <div className="flex flex-col items-center gap-6 lg:flex-row lg:justify-between">
             <div className="text-center lg:text-left">
               <h3 className="font-serif text-2xl font-bold text-background">
-                Merr ofertat e fundit direkt nga Link Travel
+                {t('footer.newsletterTitle')}
               </h3>
               <p className="mt-2 text-background/70">
-                Oferta aktuale, data nisjeje dhe paketa sezonale per Stamboll, Shqiperi, Tunizi dhe me shume.
+                {t('footer.newsletterSubtitle')}
               </p>
             </div>
             <form className="flex w-full max-w-md gap-3" onSubmit={handleNewsletterSubmit}>
@@ -71,7 +73,7 @@ export function Footer() {
                 type="email"
                 value={newsletterEmail}
                 onChange={(event) => setNewsletterEmail(event.target.value)}
-                placeholder="Enter your email"
+                placeholder={t('footer.newsletterPlaceholder')}
                 className="flex-1 rounded-md px-4 py-2 bg-background/10 border border-background/20 text-background placeholder:text-background/50 focus:bg-background/15 focus:outline-none focus:ring-1 focus:ring-primary"
               />
               <button
@@ -79,7 +81,7 @@ export function Footer() {
                 disabled={submitting}
                 className="rounded-md px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-medium whitespace-nowrap transition-colors"
               >
-                {submitting ? 'Duke derguar...' : 'Abonohu'}
+                {submitting ? t('footer.newsletterSending') : t('footer.newsletterSubmit')}
               </button>
             </form>
           </div>
@@ -99,8 +101,7 @@ export function Footer() {
               />
             </Link>
             <p className="mt-4 text-sm text-background/70 max-w-xs">
-              Oferta reale, cmime aktuale dhe mbeshtetje direkte ne WhatsApp dhe Viber.
-              Link Travel nga Gostivari ju ndihmon te rezervoni me shpejt dhe me siguri.
+              {t('footer.brandDescription')}
             </p>
             <div className="mt-6 space-y-3">
               <a href="mailto:linktravelnmk@gmail.com" className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors">
@@ -121,16 +122,16 @@ export function Footer() {
           {/* Destinations */}
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-background">
-              Destinations
+              {t('footer.destinations')}
             </h4>
             <ul className="mt-4 space-y-3">
               {footerNavigation.destinations.map((item) => (
-                <li key={item.name}>
+                <li key={item.label}>
                   <Link
                     to={item.href}
                     className="text-sm text-background/70 hover:text-background transition-colors"
                   >
-                    {item.name}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -140,16 +141,16 @@ export function Footer() {
           {/* Company */}
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-background">
-              Company
+              {t('footer.company')}
             </h4>
             <ul className="mt-4 space-y-3">
               {footerNavigation.company.map((item) => (
-                <li key={item.name}>
+                <li key={item.label}>
                   <Link
                     to={item.href}
                     className="text-sm text-background/70 hover:text-background transition-colors"
                   >
-                    {item.name}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -159,16 +160,16 @@ export function Footer() {
           {/* Support */}
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-background">
-              Support
+              {t('footer.support')}
             </h4>
             <ul className="mt-4 space-y-3">
               {footerNavigation.support.map((item) => (
-                <li key={item.name}>
+                <li key={`${item.label}-${item.href}`}>
                   <Link
                     to={item.href}
                     className="text-sm text-background/70 hover:text-background transition-colors"
                   >
-                    {item.name}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -178,16 +179,16 @@ export function Footer() {
           {/* Legal */}
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-background">
-              Legal
+              {t('footer.legal')}
             </h4>
             <ul className="mt-4 space-y-3">
               {footerNavigation.legal.map((item) => (
-                <li key={item.name}>
+                <li key={item.label}>
                   <Link
                     to={item.href}
                     className="text-sm text-background/70 hover:text-background transition-colors"
                   >
-                    {item.name}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -198,7 +199,7 @@ export function Footer() {
         {/* Bottom Section */}
         <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-background/10 pt-8 md:flex-row">
           <p className="text-sm text-background/60">
-            &copy; {new Date().getFullYear()} LinkTravel. All rights reserved.
+            {t('footer.copyright', { year: new Date().getFullYear() })}
           </p>
           <div className="flex items-center gap-4">
             {contactLinks.map((item) => (

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, Users, ChevronDown } from 'lucide-react';
 import { DatePicker, Popover as AntPopover } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '@/store/hooks';
 import { setSearchFilters } from '@/store/slices/uiSlice';
 import type { Dayjs } from 'dayjs';
@@ -12,6 +13,7 @@ import {
 } from '@/store/linktravelApi';
 
 export function HeroSearch() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { data: featuredDestinations = [] } = useGetFeaturedDestinationsQuery();
@@ -103,18 +105,17 @@ export function HeroSearch() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 text-center">
         <div className="mb-6">
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary-foreground text-sm font-medium backdrop-blur-sm border border-primary-foreground/20">
-            Discover Your Next Adventure
+            {t('home.hero.badge')}
           </span>
         </div>
 
         <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-background tracking-tight text-balance">
-          Explore the World with
+          {t('home.hero.titlePrefix')}
           <span className="block text-accent mt-2">LinkTravel</span>
         </h1>
 
         <p className="mt-6 text-lg sm:text-xl text-background/80 max-w-2xl mx-auto text-balance">
-          Curated travel experiences, luxury accommodations, and unforgettable destinations.
-          Your journey begins here.
+          {t('home.hero.subtitle')}
         </p>
 
         {/* Search Box */}
@@ -124,13 +125,13 @@ export function HeroSearch() {
               {/* Destination */}
               <div className="relative">
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5 text-left">
-                  Destination
+                  {t('home.hero.destination')}
                 </label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
                   <input
                     type="text"
-                    placeholder="Where to?"
+                    placeholder={t('home.hero.destinationPlaceholder')}
                     value={destination}
                     onChange={(e) => handleDestinationChange(e.target.value)}
                     onFocus={() => setShowDestinations(true)}
@@ -141,13 +142,13 @@ export function HeroSearch() {
                 {showDestinations && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-background rounded-xl shadow-lg border border-border z-20 py-2">
                     <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">
-                      {destination.trim().length >= 2 ? 'Search Results' : 'Popular Destinations'}
+                      {destination.trim().length >= 2 ? t('home.hero.searchResults') : t('home.hero.popularDestinations')}
                     </p>
                     {searchLoading && (
-                      <p className="px-3 py-2 text-sm text-muted-foreground">Searching...</p>
+                      <p className="px-3 py-2 text-sm text-muted-foreground">{t('common.searching')}</p>
                     )}
                     {!searchLoading && suggestions.length === 0 && (
-                      <p className="px-3 py-2 text-sm text-muted-foreground">No matches found.</p>
+                      <p className="px-3 py-2 text-sm text-muted-foreground">{t('common.noMatches')}</p>
                     )}
                     {!searchLoading && suggestions.map((suggestion) => (
                         <button
@@ -170,12 +171,12 @@ export function HeroSearch() {
               {/* Check In */}
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5 text-left">
-                  Check In
+                  {t('home.hero.checkIn')}
                 </label>
                 <DatePicker
                   value={checkIn}
                   onChange={setCheckIn}
-                  placeholder="Select date"
+                  placeholder={t('home.hero.selectDate')}
                   className="w-full h-12 rounded-xl"
                   format="MMM DD, YYYY"
                   suffixIcon={<Calendar className="h-4 w-4 text-muted-foreground" />}
@@ -185,12 +186,12 @@ export function HeroSearch() {
               {/* Check Out */}
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5 text-left">
-                  Check Out
+                  {t('home.hero.checkOut')}
                 </label>
                 <DatePicker
                   value={checkOut}
                   onChange={setCheckOut}
-                  placeholder="Select date"
+                  placeholder={t('home.hero.selectDate')}
                   className="w-full h-12 rounded-xl"
                   format="MMM DD, YYYY"
                   suffixIcon={<Calendar className="h-4 w-4 text-muted-foreground" />}
@@ -200,13 +201,13 @@ export function HeroSearch() {
               {/* Guests */}
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5 text-left">
-                  Guests
+                  {t('home.hero.guests')}
                 </label>
                 <AntPopover
                   trigger="click"
                   content={
                     <div className="flex items-center justify-between gap-4 p-2">
-                      <span className="text-sm">Guests</span>
+                      <span className="text-sm">{t('home.hero.guests')}</span>
                       <div className="flex items-center gap-2">
                         <button
                           className="h-8 w-8 rounded-md border border-border flex items-center justify-center hover:bg-muted disabled:opacity-50"
@@ -232,7 +233,7 @@ export function HeroSearch() {
                     className="w-full h-12 justify-start text-left font-normal rounded-xl bg-muted/50 hover:bg-muted px-3 flex items-center gap-2 text-sm"
                   >
                     <Users className="h-4 w-4 text-muted-foreground" />
-                    {guests} {guests === 1 ? 'Guest' : 'Guests'}
+                    {guests} {t('home.hero.guest', { count: guests })}
                     <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
                   </button>
                 </AntPopover>
@@ -245,7 +246,7 @@ export function HeroSearch() {
               onClick={handleSearch}
             >
               <Search className="h-5 w-5" />
-              Search Destinations
+              {t('home.hero.searchButton')}
             </button>
           </div>
         </div>
@@ -253,15 +254,15 @@ export function HeroSearch() {
         {/* Trust Badges */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-background/60">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-background">API-backed destinations</span>
+            <span className="text-sm font-semibold text-background">{t('home.hero.trust.destinations')}</span>
           </div>
           <div className="h-8 w-px bg-background/20" />
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-background">Handpicked stays</span>
+            <span className="text-sm font-semibold text-background">{t('home.hero.trust.stays')}</span>
           </div>
           <div className="h-8 w-px bg-background/20" />
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-background">Support when you need it</span>
+            <span className="text-sm font-semibold text-background">{t('home.hero.trust.support')}</span>
           </div>
         </div>
       </div>

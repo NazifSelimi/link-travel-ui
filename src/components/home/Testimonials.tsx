@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useGetFeaturedReviewsQuery } from '@/store/linktravelApi';
 
 export function Testimonials() {
+  const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const { data: testimonials = [], isLoading: loading } = useGetFeaturedReviewsQuery();
 
@@ -28,14 +30,13 @@ export function Testimonials() {
           {/* Left Side - Section Info */}
           <div>
             <span className="text-sm font-medium text-primary uppercase tracking-wider">
-              Testimonials
+              {t('home.testimonials.kicker')}
             </span>
             <h2 className="mt-2 font-serif text-3xl sm:text-4xl font-bold text-foreground">
-              What Our Travelers Say
+              {t('home.testimonials.title')}
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Discover why thousands of travelers trust LinkTravel for their dream vacations. 
-              Real stories from real adventurers.
+              {t('home.testimonials.subtitle')}
             </p>
 
             {/* Stats */}
@@ -47,11 +48,11 @@ export function Testimonials() {
                     <Star key={i} className="h-4 w-4 fill-accent text-accent" />
                   ))}
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">Average Rating</p>
+                <p className="text-sm text-muted-foreground mt-1">{t('home.testimonials.averageRating')}</p>
               </div>
               <div>
                 <p className="text-3xl font-bold text-primary">{testimonials.length}</p>
-                <p className="text-sm text-muted-foreground mt-1">Recent Reviews</p>
+                <p className="text-sm text-muted-foreground mt-1">{t('home.testimonials.recentReviews')}</p>
               </div>
             </div>
 
@@ -111,7 +112,7 @@ export function Testimonials() {
                 ))}
               </div>
               <p className="text-lg text-foreground leading-relaxed mb-6">
-                &ldquo;{activeTestimonial.comment || activeTestimonial.title || 'Great travel experience.'}&rdquo;
+                &ldquo;{activeTestimonial.comment || activeTestimonial.title || t('home.testimonials.fallback')}&rdquo;
               </p>
               <div className="flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
@@ -121,10 +122,10 @@ export function Testimonials() {
                   <p className="font-semibold text-foreground">
                     {activeTestimonial.user
                       ? `${activeTestimonial.user.firstName} ${activeTestimonial.user.lastName}`
-                      : 'Guest Traveler'}
+                      : t('home.testimonials.guestTraveler')}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {activeTestimonial.reviewableType || 'Trip Review'}
+                    {activeTestimonial.reviewableType || t('home.testimonials.tripReview')}
                   </p>
                 </div>
                 <div className="ml-auto text-right">

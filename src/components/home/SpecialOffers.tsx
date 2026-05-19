@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, Percent, Tag } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '@/lib/money';
 import { cn } from '@/lib/utils';
 import { useGetDiscountedPackagesQuery } from '@/store/linktravelApi';
 
 export function SpecialOffers() {
+  const { t } = useTranslation();
   const { data: offers = [], isLoading, isError } = useGetDiscountedPackagesQuery();
   const visibleOffers = offers.slice(0, 3);
 
@@ -18,13 +20,13 @@ export function SpecialOffers() {
         {/* Section Header */}
         <div className="text-center mb-12">
           <span className="text-sm font-medium text-primary uppercase tracking-wider">
-            Exclusive Deals
+            {t('home.offers.kicker')}
           </span>
           <h2 className="mt-2 font-serif text-3xl sm:text-4xl font-bold text-foreground">
-            Special Offers
+            {t('home.offers.title')}
           </h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            Take advantage of our limited-time offers and make your dream vacation a reality.
+            {t('home.offers.subtitle')}
           </p>
         </div>
 
@@ -66,7 +68,7 @@ export function SpecialOffers() {
               <div className="absolute top-4 left-4">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-xs font-semibold">
                   <Tag className="h-3 w-3" />
-                  {offer.category || 'Featured'}
+                  {offer.category || t('home.offers.featured')}
                 </span>
               </div>
 
@@ -79,12 +81,12 @@ export function SpecialOffers() {
                   <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary text-primary-foreground text-sm font-bold">
                     <Percent className="h-3.5 w-3.5" />
                     {offer.originalPrice
-                      ? `Save ${formatCurrency(Math.max(0, offer.originalPrice - offer.price), offer.destination?.currency || 'EUR')}`
+                      ? t('home.offers.save', { amount: formatCurrency(Math.max(0, offer.originalPrice - offer.price), offer.destination?.currency || 'EUR') })
                       : formatCurrency(offer.price, offer.destination?.currency || 'EUR')}
                   </span>
                   <span className="inline-flex items-center gap-1 text-background/70 text-sm">
                     <Clock className="h-3.5 w-3.5" />
-                    {offer.duration || 'Limited availability'}
+                    {offer.duration || t('home.offers.limitedAvailability')}
                   </span>
                 </div>
                 <h3 className={cn(
@@ -101,7 +103,7 @@ export function SpecialOffers() {
                   {offer.description}
                 </p>
                 <div className="flex items-center gap-2 text-accent font-medium group-hover:gap-3 transition-all">
-                  View Details <ArrowRight className="h-4 w-4" />
+                  {t('home.offers.viewDetails')} <ArrowRight className="h-4 w-4" />
                 </div>
               </div>
             </Link>

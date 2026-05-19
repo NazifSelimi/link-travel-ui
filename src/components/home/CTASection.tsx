@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Phone, Mail, MessageCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function CTASection() {
+  const { t } = useTranslation();
+
   return (
     <section className="py-20 lg:py-28 bg-primary relative overflow-hidden">
       {/* Background Pattern */}
@@ -13,11 +16,10 @@ export function CTASection() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground">
-            Nxito dhe rezervo tani
+            {t('home.cta.title')}
           </h2>
           <p className="mt-4 text-lg text-primary-foreground/80 max-w-2xl mx-auto">
-            Oferta aktuale, data te sakta dhe ndihme direkte nga ekipi i Link Travel.
-            Na kontakto per rezervim te shpejte ne WhatsApp, Viber ose email.
+            {t('home.cta.subtitle')}
           </p>
 
           {/* CTA Buttons */}
@@ -26,13 +28,13 @@ export function CTASection() {
               to="/destinations"
               className="inline-flex items-center justify-center min-w-[200px] px-6 py-3 rounded-md bg-secondary text-secondary-foreground text-base font-medium hover:bg-secondary/80 transition-colors"
             >
-              Shiko ofertat <ArrowRight className="ml-2 h-5 w-5" />
+              {t('home.cta.viewOffers')} <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
             <Link
               to="/contact"
               className="inline-flex items-center justify-center min-w-[200px] px-6 py-3 rounded-md border border-primary-foreground/30 text-primary-foreground text-base font-medium hover:bg-primary-foreground/10 bg-transparent transition-colors"
             >
-              Na kontakto
+              {t('home.cta.contactUs')}
             </Link>
           </div>
 

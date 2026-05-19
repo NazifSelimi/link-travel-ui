@@ -9,33 +9,74 @@
     "create": "Krijo",
     "update": "Përditëso",
     "loading": "Po ngarkohet...",
-    "noData": "Nuk ka të dhëna",
+    "noData": "Pa të dhëna",
     "yes": "Po",
     "no": "Jo",
     "submit": "Dërgo",
     "back": "Mbrapa",
-    "next": "Vazhdo",
+    "next": "Tjetra",
     "continue": "Vazhdo",
     "confirm": "Konfirmo",
     "close": "Mbyll",
     "actions": "Veprime",
     "details": "Detaje",
-    "language": "Gjuha"
+    "language": "Gjuha",
+    "viewAll": "Shiko të gjitha",
+    "viewDetails": "Shiko detajet",
+    "from": "nga",
+    "perNight": "/natë",
+    "any": "Çdo",
+    "all": "Të gjitha",
+    "applyFilters": "Apliko filtrat",
+    "resetAll": "Rivendos të gjitha",
+    "filters": "Filtrat",
+    "searching": "Po kërkohet...",
+    "noMatches": "Nuk u gjet asnjë rezultat.",
+    "tryAgain": "Provo përsëri",
+    "name": "Emri",
+    "email": "Email",
+    "phone": "Telefoni",
+    "subject": "Tema",
+    "message": "Mesazhi",
+    "country": "Shteti",
+    "city": "Qyteti",
+    "region": "Rajoni",
+    "address": "Adresa",
+    "stars": "Yje",
+    "rating": "Vlerësimi",
+    "reviews": "vlerësime",
+    "review_one": "vlerësim",
+    "review_other": "vlerësime"
   },
   "auth": {
     "signIn": "Hyr",
     "signUp": "Regjistrohu",
     "signOut": "Dil",
-    "logout": "Dilni",
+    "logout": "Dil",
     "email": "Email",
     "password": "Fjalëkalimi",
-    "rememberMe": "Më kujto",
-    "forgotPassword": "Harruat fjalëkalimin?",
+    "confirmPassword": "Konfirmo fjalëkalimin",
+    "firstName": "Emri",
+    "lastName": "Mbiemri",
+    "rememberMe": "Më mbaj mend",
+    "forgotPassword": "Harrove fjalëkalimin?",
     "createAccount": "Krijo llogarinë",
-    "alreadyHaveAccount": "Ke tashmë një llogari?",
+    "createAccountButton": "Krijo llogari",
+    "signInToAccount": "Hyr në llogarinë tënde",
+    "alreadyHaveAccount": "Ke tashmë llogari?",
     "dontHaveAccount": "Nuk ke llogari?",
-    "welcomeBack": "Mirë se erdhe përsëri!",
-    "loginFailed": "Hyrja dështoi. Provoni përsëri."
+    "welcomeBack": "Mirë se erdhe sërish!",
+    "accountCreated": "Llogaria u krijua! Mirë se erdhe te LinkTravel.",
+    "loginFailed": "Hyrja nuk u krye. Provo përsëri.",
+    "registrationFailed": "Regjistrimi nuk u krye. Provo përsëri.",
+    "completeRequired": "Të lutem plotëso të gjitha fushat e kërkuara.",
+    "passwordTooShort": "Fjalëkalimi duhet të ketë të paktën 8 karaktere.",
+    "passwordsMismatch": "Fjalëkalimet nuk përputhen.",
+    "pleaseSignIn": "Të lutem hyr për të përfunduar rezervimin.",
+    "emailPlaceholder": "ti@shembull.com",
+    "passwordPlaceholder": "Vendos fjalëkalimin",
+    "newPasswordPlaceholder": "Të paktën 8 karaktere",
+    "confirmPasswordPlaceholder": "Konfirmo fjalëkalimin"
   },
   "nav": {
     "home": "Ballina",
@@ -45,17 +86,371 @@
     "about": "Rreth nesh",
     "contact": "Kontakti",
     "myAccount": "Llogaria ime",
-    "adminPanel": "Paneli admin"
+    "adminPanel": "Paneli i adminit"
+  },
+  "home": {
+    "hero": {
+      "badge": "Zbulo aventurën tënde të radhës",
+      "titlePrefix": "Eksploro botën me",
+      "subtitle": "Përvoja udhëtimi të përzgjedhura, akomodime luksoze dhe destinacione të paharrueshme. Udhëtimi yt fillon këtu.",
+      "destination": "Destinacioni",
+      "destinationPlaceholder": "Ku dëshiron të udhëtosh?",
+      "checkIn": "Mbërritja",
+      "checkOut": "Largimi",
+      "selectDate": "Zgjidh datën",
+      "guests": "Mysafirë",
+      "guest_one": "Mysafir",
+      "guest_other": "Mysafirë",
+      "searchButton": "Kërko destinacione",
+      "searchResults": "Rezultatet e kërkimit",
+      "popularDestinations": "Destinacionet popullore",
+      "trust": {
+        "destinations": "Destinacione direkt nga sistemi",
+        "stays": "Akomodime të përzgjedhura",
+        "support": "Mbështetje kur ke nevojë"
+      }
+    },
+    "featured": {
+      "kicker": "Të zgjedhurat",
+      "title": "Destinacione të veçanta",
+      "subtitle": "Destinacione të përzgjedhura të preferuara nga udhëtarët në mbarë botën. Nga qytete të lashta deri tek plazhe të paprekura.",
+      "explore": "Eksploro"
+    },
+    "popularHotels": {
+      "kicker": "Ku të qëndrosh",
+      "title": "Hotele popullore",
+      "subtitle": "Akomodime të përzgjedhura që ofrojnë rehati dhe shërbim të jashtëzakonshëm.",
+      "viewAll": "Shiko të gjitha hotelet"
+    },
+    "offers": {
+      "kicker": "Oferta ekskluzive",
+      "title": "Oferta speciale",
+      "subtitle": "Përfito nga ofertat tona me kohë të kufizuar dhe bëji realitet pushimet e ëndrrave.",
+      "save": "Kurse {{amount}}",
+      "limitedAvailability": "Disponueshmëri e kufizuar",
+      "viewDetails": "Shiko detajet",
+      "featured": "I veçantë"
+    },
+    "testimonials": {
+      "kicker": "Dëshmi",
+      "title": "Çfarë thonë udhëtarët tanë",
+      "subtitle": "Zbulo pse mijëra udhëtarë i besojnë LinkTravel për pushimet e ëndrrave të tyre. Histori reale nga aventurierë realë.",
+      "averageRating": "Vlerësimi mesatar",
+      "recentReviews": "Vlerësime të fundit",
+      "fallback": "Përvojë e shkëlqyer udhëtimi.",
+      "tripReview": "Vlerësim udhëtimi",
+      "guestTraveler": "Mysafir udhëtar"
+    },
+    "whyChooseUs": {
+      "kicker": "Pse LinkTravel",
+      "title": "Udhëto me besim",
+      "subtitle": "Ne bëjmë gjithçka për të siguruar që përvoja jote e udhëtimit të jetë e qetë, e sigurt dhe e paharrueshme.",
+      "features": {
+        "easyReservations": {
+          "title": "Rezervime të lehta",
+          "description": "Dërgo kërkesën për qëndrim brenda minutash dhe ekipi ynë do t'i konfirmojë detajet me ty direkt."
+        },
+        "support": {
+          "title": "Mbështetje 24/7",
+          "description": "Ekspertët tanë të udhëtimit janë në dispozicion gjatë gjithë kohës për të të ndihmuar."
+        },
+        "trusted": {
+          "title": "Udhëzime të besueshme",
+          "description": "Të ndihmojmë të zgjedhësh destinacionin, hotelin dhe paketën e duhur me mbështetje personale."
+        },
+        "followUp": {
+          "title": "Ndjekje e shpejtë",
+          "description": "Çdo kërkesë rezervimi ruhet që ekipi ynë të të kontaktojë shpejt me hapat e ardhshëm."
+        },
+        "curated": {
+          "title": "Përvoja të përzgjedhura",
+          "description": "Destinacione dhe akomodime të përzgjedhura me kujdes nga ekspertët tanë."
+        },
+        "clearTerms": {
+          "title": "Kushte të qarta udhëtimi",
+          "description": "Çdo kërkesë ndjek kushtet e agjencisë dhe rregullat specifike të anulimit për ofertën."
+        }
+      }
+    },
+    "cta": {
+      "title": "Rezervo sot, udhëto nesër",
+      "subtitle": "Oferta aktuale, data të sakta dhe ndihmë direkte nga ekipi i Link Travel. Na kontakto për rezervim të shpejtë në WhatsApp, Viber ose email.",
+      "viewOffers": "Shiko ofertat",
+      "contactUs": "Na kontakto"
+    }
+  },
+  "footer": {
+    "newsletterTitle": "Merr ofertat e fundit direkt nga Link Travel",
+    "newsletterSubtitle": "Oferta aktuale, data nisjeje dhe paketa sezonale për Stamboll, Shqipëri, Tunizi dhe më shumë.",
+    "newsletterPlaceholder": "Vendos email-in tënd",
+    "newsletterSending": "Duke dërguar...",
+    "newsletterSubmit": "Abonohu",
+    "newsletterPleaseEnterEmail": "Të lutem vendos email-in tënd.",
+    "newsletterSubscribed": "U abonove me sukses në buletin.",
+    "newsletterFailed": "Abonimi në buletin nuk u krye.",
+    "brandDescription": "Oferta reale, çmime aktuale dhe mbështetje direkte në WhatsApp dhe Viber. Link Travel nga Gostivari të ndihmon të rezervosh më shpejt dhe me siguri.",
+    "destinations": "Destinacionet",
+    "company": "Kompania",
+    "support": "Mbështetje",
+    "legal": "Informacione ligjore",
+    "links": {
+      "allDestinations": "Të gjitha destinacionet",
+      "hotels": "Hotelet",
+      "packages": "Paketat",
+      "aboutUs": "Rreth nesh",
+      "contact": "Kontakti",
+      "booking": "Rezervim",
+      "travelPolicy": "Kushtet e udhëtimit",
+      "contactSupport": "Kontakto mbështetjen"
+    },
+    "copyright": "© {{year}} LinkTravel. Të gjitha të drejtat e rezervuara."
+  },
+  "destinations": {
+    "page": {
+      "title": "Zbulo destinacione",
+      "subtitle": "Eksploro destinacione mahnitëse anekënd botës, nga plazhe me diell deri tek pushime malore.",
+      "noResults": "Ende nuk ka destinacione që përputhen me filtrat e tu.",
+      "tryAdjust": "Provo të ndryshosh kërkimin ose të heqësh disa filtra."
+    },
+    "filters": {
+      "title": "Filtro destinacionet",
+      "searchPlaceholder": "Kërko destinacione...",
+      "sort": {
+        "popular": "Më popullore",
+        "highestRated": "Më të vlerësuara",
+        "priceAsc": "Çmimi: nga më i ulëti",
+        "priceDesc": "Çmimi: nga më i larti",
+        "nameAsc": "Emri: A deri Zh"
+      },
+      "country": "Shteti",
+      "allCountries": "Të gjitha shtetet",
+      "priceRangeFrom": "Diapazoni i çmimit (nga)",
+      "minimumRating": "Vlerësimi minimal",
+      "experienceType": "Lloji i përvojës",
+      "tags": {
+        "beach": "Plazh",
+        "mountains": "Male",
+        "historic": "Historik",
+        "adventure": "Aventurë",
+        "romantic": "Romantik",
+        "family": "Familjar",
+        "culture": "Kulturë",
+        "nature": "Natyrë"
+      },
+      "countries": {
+        "greece": "Greqi",
+        "croatia": "Kroaci",
+        "turkey": "Turqi",
+        "montenegro": "Mal i Zi",
+        "albania": "Shqipëri",
+        "northMacedonia": "Maqedonia e Veriut",
+        "slovenia": "Slloveni"
+      },
+      "resultsFound_one": "{{count}} destinacion i gjetur",
+      "resultsFound_other": "{{count}} destinacione të gjetura",
+      "ratingSuffix": "{{rating}}+ vlerësim"
+    },
+    "card": {
+      "from": "nga",
+      "explore": "Eksploro"
+    }
+  },
+  "hotels": {
+    "page": {
+      "title": "Gjej qëndrimin tënd perfekt",
+      "subtitle": "Zbulo hotelet e përzgjedhura në destinacionet tona me vlerësime të verifikuara dhe komoditete të zgjedhura.",
+      "noResults": "Ende nuk ka hotele që përputhen me filtrat e tu.",
+      "tryAdjust": "Provo të ndryshosh kërkimin ose të heqësh disa filtra."
+    },
+    "filters": {
+      "title": "Filtro hotelet",
+      "searchPlaceholder": "Kërko hotele...",
+      "sort": {
+        "highestRated": "Më të vlerësuara",
+        "priceAsc": "Çmimi: nga më i ulëti",
+        "priceDesc": "Çmimi: nga më i larti",
+        "starsDesc": "Yjet: nga më të lartët",
+        "nameAsc": "Emri: A deri Zh"
+      },
+      "pricePerNight": "Çmimi për natë",
+      "hotelClass": "Klasa e hotelit",
+      "minimumGuestRating": "Vlerësimi minimal nga mysafirët",
+      "amenities": "Komoditete",
+      "amenityList": {
+        "wifi": "WiFi",
+        "pool": "Pishinë",
+        "spa": "Spa",
+        "restaurant": "Restorant",
+        "bar": "Bar",
+        "fitness": "Palestër",
+        "parking": "Parking",
+        "beachAccess": "Akses në plazh",
+        "roomService": "Shërbim në dhomë",
+        "concierge": "Konsierzh"
+      },
+      "resultsFound_one": "{{count}} hotel i gjetur",
+      "resultsFound_other": "{{count}} hotele të gjetura",
+      "starsSuffix": "{{count}} yje",
+      "ratingSuffix": "{{rating}}+ vlerësim"
+    },
+    "card": {
+      "starHotel": "Hotel me {{count}} yje",
+      "locationUnavailable": "Lokacioni nuk është i disponueshëm",
+      "perNight": "/natë"
+    }
+  },
+  "packages": {
+    "page": {
+      "title": "Paketa udhëtimi",
+      "subtitle": "Paketa gjithëpërfshirëse me itinerare të përzgjedhura, hotele dhe përvoja.",
+      "noResults": "Ende nuk ka paketa që përputhen me filtrat e tu.",
+      "allCategories": "Të gjitha kategoritë"
+    },
+    "category": {
+      "all": "Të gjitha",
+      "beach": "Plazh",
+      "cultural": "Kulturore",
+      "adventure": "Aventurë",
+      "family": "Familjare",
+      "wellness": "Wellness",
+      "seasonalOffer": "Ofertë sezonale",
+      "cityBreak": "Udhëtim qytetesh"
+    }
+  },
+  "booking": {
+    "stepDates": "Datat dhe mysafirët",
+    "stepDetails": "Detajet e mysafirit",
+    "stepReview": "Rishikim dhe konfirmim",
+    "backToHotel": "Mbrapa te hoteli",
+    "backToPackage": "Mbrapa te paketa",
+    "selectDatesAndGuests": "Zgjidh datat dhe mysafirët",
+    "checkInDate": "Data e mbërritjes",
+    "checkOutDate": "Data e largimit",
+    "preferredStart": "Data e preferuar e fillimit",
+    "preferredReturn": "Data e preferuar e kthimit",
+    "numberOfGuests": "Numri i mysafirëve",
+    "guestInformation": "Informacionet e mysafirit",
+    "firstNameLabel": "Emri *",
+    "lastNameLabel": "Mbiemri *",
+    "emailLabel": "Email *",
+    "phoneLabel": "Telefoni *",
+    "country": "Shteti",
+    "selectCountry": "Zgjidh shtetin",
+    "specialRequests": "Kërkesa të veçanta (Opsionale)",
+    "specialRequestsPlaceholder": "Fleksibilitet i datave, mosha e fëmijëve, preferenca për dhomën, nevoja për fluturim...",
+    "reviewAndConfirm": "Rishiko dhe konfirmo",
+    "bookingInProgress": "Rezervimi në proces",
+    "bookingInProgressBody": "Me dërgimin, rezervimi ruhet në sistem. Link Travel do të të kontaktojë me telefon dhe pagesa online nuk kryhet ende.",
+    "whatYouAreBooking": "Çfarë po rezervon",
+    "package": "Paketa",
+    "hotel": "Hoteli",
+    "travelers": "Udhëtarë",
+    "room": "Dhomë",
+    "guest": "Mysafir",
+    "dates": "Datat",
+    "selectDatesPlaceholder": "Zgjidh datat",
+    "termsAcknowledgement": "Konfirmoj që detajet e mia janë të sakta dhe pranoj",
+    "generalConditions": "kushtet e përgjithshme të udhëtimit",
+    "and": "dhe",
+    "termsTail": "rregullat specifike të anulimit/pagesës për ofertën. Kuptoj që pagesa kryhet direkt me agjencinë derisa të zbatohet pagesa online.",
+    "savedNotice": "Rezervimi yt do të ruhet si në proces. Kur admini ta konfirmojë, do të marrësh email konfirmimi.",
+    "saveBooking": "Ruaj rezervimin",
+    "submitting": "Duke dërguar...",
+    "continue": "Vazhdo",
+    "back": "Mbrapa",
+    "infoNoticeTitle": "Rezervim pa pagesë online",
+    "infoNoticeBody": "Rezervimi yt ruhet i pari. Link Travel konfirmon disponueshmërinë, çmimin përfundimtar dhe detajet e pagesës me telefon.",
+    "checkIn": "Mbërritja",
+    "checkOut": "Largimi",
+    "start": "Fillimi",
+    "return": "Kthimi",
+    "nights": "Net",
+    "estimatedTotal": "Totali i vlerësuar",
+    "noOnlinePayment": "Pa pagesë online. Agjencia konfirmon çmimin përfundimtar dhe hapat e pagesës.",
+    "openConditions": "Hap kushtet e përgjithshme të udhëtimit",
+    "emptyChooseTitle": "Së pari zgjidh një rezervim",
+    "emptyChooseBody": "Fillo nga një dhomë hoteli ose paketë para se të vazhdosh me rezervimin.",
+    "browseHotels": "Shfleto hotelet",
+    "browsePackages": "Shfleto paketat",
+    "hotelNotFound": "Hoteli nuk u gjet",
+    "hotelNotFoundBody": "Nuk mundëm ta ngarkojmë këtë hotel për rezervim. Të lutem fillo përsëri nga faqja e hoteleve.",
+    "packageNotFound": "Paketa nuk u gjet",
+    "packageNotFoundBody": "Nuk mundëm ta ngarkojmë këtë paketë për rezervim. Të lutem fillo përsëri nga faqja e paketave.",
+    "roomNotAvailable": "Dhoma nuk është e disponueshme",
+    "roomNotAvailableBody": "Dhoma e zgjedhur nuk mund të ngarkohet. Të lutem zgjidh një dhomë tjetër për këtë hotel.",
+    "backToHotelButton": "Mbrapa te hoteli",
+    "completeFirst": "Të lutem së pari plotëso detajet e rezervimit.",
+    "failedToCreate": "Krijimi i rezervimit nuk u krye"
+  },
+  "bookingConfirmation": {
+    "loading": "Po ngarkohet rezervimi…",
+    "notFound": "Rezervimi nuk u gjet",
+    "notFoundBody": "Rezervimi që po kërkoje nuk mund të ngarkohet. Të lutem provo përsëri nga rezervimet e tua ose fillo një rezervim të ri.",
+    "backToHome": "Mbrapa te ballina",
+    "browseHotels": "Shfleto hotelet",
+    "title": "Rezervimi u ruajt",
+    "bookingReference": "Numri i rezervimit",
+    "summary": "Përmbledhja e rezervimit",
+    "nextSteps": "Hapat e ardhshëm",
+    "needHelp": "Të nevojitet ndihmë?",
+    "callUs": "Na telefono",
+    "emailUs": "Na shkruaj email"
+  },
+  "contact": {
+    "title": "Na kontakto",
+    "subtitle": "Jemi këtu për çdo pyetje rreth udhëtimit tënd.",
+    "form": {
+      "name": "Emri",
+      "namePlaceholder": "Emri yt",
+      "email": "Email",
+      "emailPlaceholder": "ti@shembull.com",
+      "phone": "Telefoni (opsionale)",
+      "phonePlaceholder": "+389 71 …",
+      "subject": "Tema",
+      "subjectPlaceholder": "Si mund të të ndihmojmë?",
+      "message": "Mesazhi",
+      "messagePlaceholder": "Na trego pak më shumë…",
+      "submit": "Dërgo mesazhin",
+      "submitting": "Duke dërguar…",
+      "successTitle": "Faleminderit që na kontaktove!",
+      "successBody": "E morëm mesazhin tënd dhe do të të kontaktojmë së shpejti.",
+      "errorTitle": "Mesazhi yt nuk u dërgua",
+      "errorBody": "Të lutem provo përsëri më vonë, ose na kontakto direkt me telefon ose email."
+    },
+    "info": {
+      "title": "Kontakto ekipin direkt",
+      "address": "Rr. Ivo Lola Ribar 32, Gostivar",
+      "phone": "+389 71 726 726",
+      "email": "linktravelnmk@gmail.com"
+    }
+  },
+  "about": {
+    "title": "Rreth LinkTravel",
+    "subtitle": "Një agjenci udhëtimi nga Gostivari që kujdeset për udhëtimin tënd nga fillimi në fund.",
+    "intro": "LinkTravel përzgjedh destinacione, hotele dhe paketa të përshtatura për udhëtarët nga Maqedonia e Veriut, Shqipëria, Kosova dhe rajoni i gjerë. Çdo rezervim ndiqet personalisht — me telefon, WhatsApp ose në zyrën tonë.",
+    "valuesTitle": "Në çfarë fokusohemi",
+    "ctaTitle": "Planifiko udhëtimin tënd të radhës me ne",
+    "ctaButton": "Shiko destinacionet"
+  },
+  "policy": {
+    "title": "Kushtet e udhëtimit",
+    "subtitle": "Si funksionojnë rezervimet, pagesat dhe anulimet në Link Travel.",
+    "openPdf": "Hap kushtet e plota (PDF)"
+  },
+  "notFound": {
+    "title": "Faqja nuk u gjet",
+    "subtitle": "Faqja që po kërkoje nuk ekziston ose është zhvendosur.",
+    "backHome": "Mbrapa te ballina"
   },
   "admin": {
-    "panel": "Paneli admin",
-    "backToSite": "Kthehu te faqja",
+    "panel": "Paneli i adminit",
+    "backToSite": "Mbrapa te faqja",
     "administrator": "Administrator",
     "menu": {
-      "dashboard": "Paneli",
+      "dashboard": "Paneli kryesor",
       "destinations": "Destinacionet",
       "hotels": "Hotelet",
-      "roomTypes": "Llojet e dhomave",
+      "roomTypes": "Tipet e dhomave",
       "packages": "Paketat",
       "reservations": "Rezervimet",
       "reviews": "Vlerësimet",
@@ -70,24 +465,24 @@
       },
       "publishStatus": "Statusi i publikimit",
       "draft": "Draft",
-      "published": "Publikuar",
+      "published": "I publikuar",
       "featured": "I veçantë",
       "name": "Emri",
-      "shortDescription": "Përshkrimi i shkurtër",
+      "shortDescription": "Përshkrim i shkurtër",
       "description": "Përshkrimi",
       "tags": "Etiketat",
-      "highlights": "Atraksionet",
+      "highlights": "Pikat kryesore",
       "cancellationPolicy": "Politika e anulimit",
-      "childrenPolicy": "Fëmijët",
-      "petsPolicy": "Kafshët shtëpiake",
+      "childrenPolicy": "Politika për fëmijët",
+      "petsPolicy": "Politika për kafshët",
       "includes": "Përfshin",
       "itineraryHighlights": "Programi"
     },
     "messages": {
-      "saved": "Ruajtur",
-      "deleted": "Fshirë",
-      "saveFailed": "Ruajtja dështoi",
-      "deleteFailed": "Fshirja dështoi"
+      "saved": "U ruajt",
+      "deleted": "U fshi",
+      "saveFailed": "Ruajtja nuk u krye",
+      "deleteFailed": "Fshirja nuk u krye"
     }
   }
 }

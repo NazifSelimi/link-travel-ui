@@ -20,7 +20,33 @@
     "close": "Close",
     "actions": "Actions",
     "details": "Details",
-    "language": "Language"
+    "language": "Language",
+    "viewAll": "View All",
+    "viewDetails": "View Details",
+    "from": "from",
+    "perNight": "/night",
+    "any": "Any",
+    "all": "All",
+    "applyFilters": "Apply Filters",
+    "resetAll": "Reset All",
+    "filters": "Filters",
+    "searching": "Searching...",
+    "noMatches": "No matches found.",
+    "tryAgain": "Try again",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "subject": "Subject",
+    "message": "Message",
+    "country": "Country",
+    "city": "City",
+    "region": "Region",
+    "address": "Address",
+    "stars": "Stars",
+    "rating": "Rating",
+    "reviews": "reviews",
+    "review_one": "review",
+    "review_other": "reviews"
   },
   "auth": {
     "signIn": "Sign In",
@@ -29,13 +55,28 @@
     "logout": "Logout",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
     "createAccount": "Create your account",
+    "createAccountButton": "Create Account",
+    "signInToAccount": "Sign in to your account",
     "alreadyHaveAccount": "Already have an account?",
     "dontHaveAccount": "Don't have an account?",
     "welcomeBack": "Welcome back!",
-    "loginFailed": "Login failed. Please try again."
+    "accountCreated": "Account created! Welcome to LinkTravel.",
+    "loginFailed": "Login failed. Please try again.",
+    "registrationFailed": "Registration failed. Please try again.",
+    "completeRequired": "Please complete all required fields.",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "passwordsMismatch": "Passwords do not match.",
+    "pleaseSignIn": "Please sign in to complete your booking.",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Enter your password",
+    "newPasswordPlaceholder": "At least 8 characters",
+    "confirmPasswordPlaceholder": "Confirm your password"
   },
   "nav": {
     "home": "Home",
@@ -46,6 +87,360 @@
     "contact": "Contact",
     "myAccount": "My Account",
     "adminPanel": "Admin Panel"
+  },
+  "home": {
+    "hero": {
+      "badge": "Discover Your Next Adventure",
+      "titlePrefix": "Explore the World with",
+      "subtitle": "Curated travel experiences, luxury accommodations, and unforgettable destinations. Your journey begins here.",
+      "destination": "Destination",
+      "destinationPlaceholder": "Where to?",
+      "checkIn": "Check In",
+      "checkOut": "Check Out",
+      "selectDate": "Select date",
+      "guests": "Guests",
+      "guest_one": "Guest",
+      "guest_other": "Guests",
+      "searchButton": "Search Destinations",
+      "searchResults": "Search Results",
+      "popularDestinations": "Popular Destinations",
+      "trust": {
+        "destinations": "API-backed destinations",
+        "stays": "Handpicked stays",
+        "support": "Support when you need it"
+      }
+    },
+    "featured": {
+      "kicker": "Top Picks",
+      "title": "Featured Destinations",
+      "subtitle": "Handpicked destinations loved by travelers worldwide. From ancient cities to pristine beaches.",
+      "explore": "Explore"
+    },
+    "popularHotels": {
+      "kicker": "Where to Stay",
+      "title": "Popular Hotels",
+      "subtitle": "Handpicked accommodations offering exceptional comfort and service.",
+      "viewAll": "View All Hotels"
+    },
+    "offers": {
+      "kicker": "Exclusive Deals",
+      "title": "Special Offers",
+      "subtitle": "Take advantage of our limited-time offers and make your dream vacation a reality.",
+      "save": "Save {{amount}}",
+      "limitedAvailability": "Limited availability",
+      "viewDetails": "View Details",
+      "featured": "Featured"
+    },
+    "testimonials": {
+      "kicker": "Testimonials",
+      "title": "What Our Travelers Say",
+      "subtitle": "Discover why thousands of travelers trust LinkTravel for their dream vacations. Real stories from real adventurers.",
+      "averageRating": "Average Rating",
+      "recentReviews": "Recent Reviews",
+      "fallback": "Great travel experience.",
+      "tripReview": "Trip Review",
+      "guestTraveler": "Guest Traveler"
+    },
+    "whyChooseUs": {
+      "kicker": "Why LinkTravel",
+      "title": "Travel with Confidence",
+      "subtitle": "We go above and beyond to ensure your travel experience is seamless, secure, and unforgettable.",
+      "features": {
+        "easyReservations": {
+          "title": "Easy Reservations",
+          "description": "Send your stay request in minutes and let our team confirm the details with you directly."
+        },
+        "support": {
+          "title": "24/7 Support",
+          "description": "Our travel experts are available around the clock to assist you."
+        },
+        "trusted": {
+          "title": "Trusted Guidance",
+          "description": "We help you choose the right destination, hotel, and package with personal support."
+        },
+        "followUp": {
+          "title": "Fast Follow-Up",
+          "description": "Every reservation request is saved so our team can contact you quickly with next steps."
+        },
+        "curated": {
+          "title": "Curated Experiences",
+          "description": "Handpicked destinations and accommodations vetted by our experts."
+        },
+        "clearTerms": {
+          "title": "Clear Travel Conditions",
+          "description": "Every request follows agency travel conditions and offer-specific cancellation rules."
+        }
+      }
+    },
+    "cta": {
+      "title": "Book Today, Travel Tomorrow",
+      "subtitle": "Current offers, exact dates, and direct help from the Link Travel team. Contact us for a fast booking on WhatsApp, Viber, or email.",
+      "viewOffers": "View Offers",
+      "contactUs": "Contact Us"
+    }
+  },
+  "footer": {
+    "newsletterTitle": "Get the latest offers straight from Link Travel",
+    "newsletterSubtitle": "Current deals, departure dates, and seasonal packages for Istanbul, Albania, Tunisia, and more.",
+    "newsletterPlaceholder": "Enter your email",
+    "newsletterSending": "Sending...",
+    "newsletterSubmit": "Subscribe",
+    "newsletterPleaseEnterEmail": "Please enter your email address.",
+    "newsletterSubscribed": "You have been subscribed to the newsletter.",
+    "newsletterFailed": "Failed to subscribe to the newsletter.",
+    "brandDescription": "Real offers, current prices, and direct support on WhatsApp and Viber. Link Travel from Gostivar helps you book faster and safer.",
+    "destinations": "Destinations",
+    "company": "Company",
+    "support": "Support",
+    "legal": "Legal",
+    "links": {
+      "allDestinations": "All Destinations",
+      "hotels": "Hotels",
+      "packages": "Packages",
+      "aboutUs": "About Us",
+      "contact": "Contact",
+      "booking": "Booking",
+      "travelPolicy": "Travel Policy",
+      "contactSupport": "Contact Support"
+    },
+    "copyright": "© {{year}} LinkTravel. All rights reserved."
+  },
+  "destinations": {
+    "page": {
+      "title": "Discover Destinations",
+      "subtitle": "Explore breathtaking destinations around the world, from sun-soaked beaches to mountain getaways.",
+      "noResults": "No destinations match your filters yet.",
+      "tryAdjust": "Try adjusting your search or removing some filters."
+    },
+    "filters": {
+      "title": "Filter Destinations",
+      "searchPlaceholder": "Search destinations...",
+      "sort": {
+        "popular": "Most Popular",
+        "highestRated": "Highest Rated",
+        "priceAsc": "Price: Low to High",
+        "priceDesc": "Price: High to Low",
+        "nameAsc": "Name: A to Z"
+      },
+      "country": "Country",
+      "allCountries": "All Countries",
+      "priceRangeFrom": "Price Range (from)",
+      "minimumRating": "Minimum Rating",
+      "experienceType": "Experience Type",
+      "tags": {
+        "beach": "Beach",
+        "mountains": "Mountains",
+        "historic": "Historic",
+        "adventure": "Adventure",
+        "romantic": "Romantic",
+        "family": "Family",
+        "culture": "Culture",
+        "nature": "Nature"
+      },
+      "countries": {
+        "greece": "Greece",
+        "croatia": "Croatia",
+        "turkey": "Turkey",
+        "montenegro": "Montenegro",
+        "albania": "Albania",
+        "northMacedonia": "North Macedonia",
+        "slovenia": "Slovenia"
+      },
+      "resultsFound_one": "{{count}} destination found",
+      "resultsFound_other": "{{count}} destinations found",
+      "ratingSuffix": "{{rating}}+ rating"
+    },
+    "card": {
+      "from": "from",
+      "explore": "Explore"
+    }
+  },
+  "hotels": {
+    "page": {
+      "title": "Find Your Perfect Stay",
+      "subtitle": "Discover handpicked hotels across our destinations with verified ratings and curated amenities.",
+      "noResults": "No hotels match your filters yet.",
+      "tryAdjust": "Try adjusting your search or clearing some filters."
+    },
+    "filters": {
+      "title": "Filter Hotels",
+      "searchPlaceholder": "Search hotels...",
+      "sort": {
+        "highestRated": "Highest Rated",
+        "priceAsc": "Price: Low to High",
+        "priceDesc": "Price: High to Low",
+        "starsDesc": "Stars: High to Low",
+        "nameAsc": "Name: A to Z"
+      },
+      "pricePerNight": "Price per Night",
+      "hotelClass": "Hotel Class",
+      "minimumGuestRating": "Minimum Guest Rating",
+      "amenities": "Amenities",
+      "amenityList": {
+        "wifi": "WiFi",
+        "pool": "Pool",
+        "spa": "Spa",
+        "restaurant": "Restaurant",
+        "bar": "Bar",
+        "fitness": "Fitness",
+        "parking": "Parking",
+        "beachAccess": "Beach Access",
+        "roomService": "Room Service",
+        "concierge": "Concierge"
+      },
+      "resultsFound_one": "{{count}} hotel found",
+      "resultsFound_other": "{{count}} hotels found",
+      "starsSuffix": "{{count}} stars",
+      "ratingSuffix": "{{rating}}+ rating"
+    },
+    "card": {
+      "starHotel": "{{count}}-star hotel",
+      "locationUnavailable": "Location unavailable",
+      "perNight": "/night"
+    }
+  },
+  "packages": {
+    "page": {
+      "title": "Travel Packages",
+      "subtitle": "All-inclusive packages with curated itineraries, hotels, and experiences.",
+      "noResults": "No packages match your filters yet.",
+      "allCategories": "All Categories"
+    },
+    "category": {
+      "all": "All",
+      "beach": "Beach",
+      "cultural": "Cultural",
+      "adventure": "Adventure",
+      "family": "Family",
+      "wellness": "Wellness",
+      "seasonalOffer": "Seasonal Offer",
+      "cityBreak": "City Break"
+    }
+  },
+  "booking": {
+    "stepDates": "Dates & Guests",
+    "stepDetails": "Guest Details",
+    "stepReview": "Review & Confirm",
+    "backToHotel": "Back to hotel",
+    "backToPackage": "Back to package",
+    "selectDatesAndGuests": "Select dates and guests",
+    "checkInDate": "Check-in date",
+    "checkOutDate": "Check-out date",
+    "preferredStart": "Preferred start date",
+    "preferredReturn": "Preferred return date",
+    "numberOfGuests": "Number of Guests",
+    "guestInformation": "Guest Information",
+    "firstNameLabel": "First Name *",
+    "lastNameLabel": "Last Name *",
+    "emailLabel": "Email Address *",
+    "phoneLabel": "Phone Number *",
+    "country": "Country",
+    "selectCountry": "Select country",
+    "specialRequests": "Special Requests (Optional)",
+    "specialRequestsPlaceholder": "Dates flexibility, children ages, room preferences, flight needs...",
+    "reviewAndConfirm": "Review and confirm",
+    "bookingInProgress": "Booking in progress",
+    "bookingInProgressBody": "Submitting saves your booking in the system. Link Travel will contact you by phone, and online payment is not charged yet.",
+    "whatYouAreBooking": "What you are booking",
+    "package": "Package",
+    "hotel": "Hotel",
+    "travelers": "Travelers",
+    "room": "Room",
+    "guest": "Guest",
+    "dates": "Dates",
+    "selectDatesPlaceholder": "Select dates",
+    "termsAcknowledgement": "I confirm that my guest details are correct and I accept Link Travel's",
+    "generalConditions": "general travel conditions",
+    "and": "and",
+    "termsTail": "the offer-specific cancellation/payment rules. I understand payment is handled directly with the agency until online payment is implemented.",
+    "savedNotice": "Your booking will be saved as in progress. When admin confirms it, you will receive a confirmed booking email.",
+    "saveBooking": "Save Booking",
+    "submitting": "Submitting...",
+    "continue": "Continue",
+    "back": "Back",
+    "infoNoticeTitle": "Booking without online payment",
+    "infoNoticeBody": "Your booking is saved first. Link Travel confirms availability, final price, and payment details by phone.",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "start": "Start",
+    "return": "Return",
+    "nights": "Nights",
+    "estimatedTotal": "Estimated Total",
+    "noOnlinePayment": "No online payment. Agency confirms final price and payment steps.",
+    "openConditions": "Open general travel conditions",
+    "emptyChooseTitle": "Choose a booking first",
+    "emptyChooseBody": "Start from a hotel room or package before continuing to booking.",
+    "browseHotels": "Browse Hotels",
+    "browsePackages": "Browse Packages",
+    "hotelNotFound": "Hotel not found",
+    "hotelNotFoundBody": "We could not load this hotel for booking. Please start again from the hotels page.",
+    "packageNotFound": "Package not found",
+    "packageNotFoundBody": "We could not load this package for booking. Please start again from the packages page.",
+    "roomNotAvailable": "Room not available",
+    "roomNotAvailableBody": "The selected room could not be loaded. Please choose another room for this hotel.",
+    "backToHotelButton": "Back to Hotel",
+    "completeFirst": "Please complete your booking details first.",
+    "failedToCreate": "Failed to create booking"
+  },
+  "bookingConfirmation": {
+    "loading": "Loading booking…",
+    "notFound": "Booking not found",
+    "notFoundBody": "The booking you were looking for could not be loaded. Please try again from your reservations or start a new booking.",
+    "backToHome": "Back to Home",
+    "browseHotels": "Browse Hotels",
+    "title": "Booking Saved",
+    "bookingReference": "Booking reference",
+    "summary": "Booking summary",
+    "nextSteps": "Next steps",
+    "needHelp": "Need help?",
+    "callUs": "Call us",
+    "emailUs": "Email us"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "We're here to help with any questions about your trip.",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "phone": "Phone (optional)",
+      "phonePlaceholder": "+389 71 …",
+      "subject": "Subject",
+      "subjectPlaceholder": "How can we help?",
+      "message": "Message",
+      "messagePlaceholder": "Tell us a bit more…",
+      "submit": "Send Message",
+      "submitting": "Sending…",
+      "successTitle": "Thanks for reaching out!",
+      "successBody": "We received your message and will be in touch shortly.",
+      "errorTitle": "We could not send your message",
+      "errorBody": "Please try again later, or reach us directly by phone or email."
+    },
+    "info": {
+      "title": "Reach the team directly",
+      "address": "Rr. Ivo Lola Ribar 32, Gostivar",
+      "phone": "+389 71 726 726",
+      "email": "linktravelnmk@gmail.com"
+    }
+  },
+  "about": {
+    "title": "About LinkTravel",
+    "subtitle": "A travel agency from Gostivar that handles your trip end-to-end.",
+    "intro": "LinkTravel curates destinations, hotels, and packages tailored to travelers from North Macedonia, Albania, Kosovo, and the wider region. Every reservation is followed up personally — by phone, WhatsApp, or in our office.",
+    "valuesTitle": "What we focus on",
+    "ctaTitle": "Plan your next trip with us",
+    "ctaButton": "View destinations"
+  },
+  "policy": {
+    "title": "Travel Policy",
+    "subtitle": "How reservations, payments, and cancellations work at Link Travel.",
+    "openPdf": "Open the full conditions (PDF)"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "subtitle": "The page you were looking for does not exist or has moved.",
+    "backHome": "Back to Home"
   },
   "admin": {
     "panel": "Admin Panel",
