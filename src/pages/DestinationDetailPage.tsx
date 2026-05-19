@@ -4,6 +4,7 @@ import {
   MapPin, Star, Calendar, Globe, Clock, CloudSun,
   ChevronLeft, ChevronRight, Heart, Share2, ArrowLeft,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { HotelCard } from '@/components/hotels/HotelCard';
 import { MapEmbed } from '@/components/MapEmbed';
 import { formatCurrency } from '@/lib/money';
@@ -11,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { useGetDestinationQuery, useGetHotelsByDestinationQuery } from '@/store/linktravelApi';
 
 export default function DestinationDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { data: destination, isLoading, isError } = useGetDestinationQuery(id ?? '', {
     skip: !id,
@@ -38,15 +40,15 @@ export default function DestinationDetailPage() {
       <div className="min-h-screen bg-background py-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-border bg-card p-8 text-center">
-            <h1 className="font-serif text-3xl font-bold text-foreground">Destination not found</h1>
+            <h1 className="font-serif text-3xl font-bold text-foreground">{t('detail.destinationNotFound')}</h1>
             <p className="mt-3 text-muted-foreground">
-              The destination you requested could not be found.
+              {t('detail.destinationNotFoundBody')}
             </p>
             <Link
               to="/destinations"
               className="mt-6 inline-flex items-center rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Back to Destinations
+              {t('detail.backToDestinations')}
             </Link>
           </div>
         </div>
@@ -81,7 +83,7 @@ export default function DestinationDetailPage() {
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-background/80 text-sm backdrop-blur-sm hover:bg-background transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Destinations
+            {t('detail.backToDestinations')}
           </Link>
         </div>
 
@@ -143,7 +145,7 @@ export default function DestinationDetailPage() {
               <div className="flex items-center gap-1">
                 <Star className="h-5 w-5 fill-accent text-accent" />
                 <span className="text-background font-bold">{destination.rating}</span>
-                <span className="text-background/70">({destination.reviewCount} reviews)</span>
+                <span className="text-background/70">({destination.reviewCount} {t('common.review', { count: destination.reviewCount })})</span>
               </div>
               <div className="flex gap-2">
                 {destinationTags.map((tag) => (
@@ -164,7 +166,7 @@ export default function DestinationDetailPage() {
             {/* Main Content */}
             <div className="lg:col-span-2">
               <h2 className="font-serif text-2xl font-bold text-foreground mb-4">
-                About {destination.name}
+                {t('detail.aboutX', { name: destination.name })}
               </h2>
               <p className="text-muted-foreground leading-relaxed">{destination.description}</p>
 
@@ -172,29 +174,29 @@ export default function DestinationDetailPage() {
               <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="p-4 rounded-xl bg-muted/50">
                   <Calendar className="h-5 w-5 text-primary mb-2" />
-                  <p className="text-xs text-muted-foreground">Best Time to Visit</p>
+                  <p className="text-xs text-muted-foreground">{t('detail.bestTime')}</p>
                   <p className="text-sm font-medium text-foreground">{destination.bestTimeToVisit}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-muted/50">
                   <CloudSun className="h-5 w-5 text-primary mb-2" />
-                  <p className="text-xs text-muted-foreground">Climate</p>
+                  <p className="text-xs text-muted-foreground">{t('detail.climate')}</p>
                   <p className="text-sm font-medium text-foreground">{destination.climate}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-muted/50">
                   <Globe className="h-5 w-5 text-primary mb-2" />
-                  <p className="text-xs text-muted-foreground">Language</p>
+                  <p className="text-xs text-muted-foreground">{t('detail.language')}</p>
                   <p className="text-sm font-medium text-foreground">{destination.language}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-muted/50">
                   <Clock className="h-5 w-5 text-primary mb-2" />
-                  <p className="text-xs text-muted-foreground">Timezone</p>
+                  <p className="text-xs text-muted-foreground">{t('detail.timezone')}</p>
                   <p className="text-sm font-medium text-foreground">{destination.timezone}</p>
                 </div>
               </div>
 
               {/* Location */}
               <div className="mt-8">
-                <h3 className="font-serif text-xl font-bold text-foreground mb-4">Location</h3>
+                <h3 className="font-serif text-xl font-bold text-foreground mb-4">{t('detail.location')}</h3>
                 <MapEmbed
                   title={`${destination.name}, ${destination.country}`}
                   subtitle={destination.formattedAddress || destination.shortDescription}
@@ -209,22 +211,22 @@ export default function DestinationDetailPage() {
               <div className="sticky top-24 space-y-6">
                 {/* Price Card */}
                 <div className="p-6 rounded-2xl bg-card border border-border">
-                  <p className="text-sm text-muted-foreground">Packages from</p>
+                  <p className="text-sm text-muted-foreground">{t('detail.packagesFrom')}</p>
                   <p className="text-4xl font-bold text-foreground">
                     {formatCurrency(destination.priceFrom, destination.currency)}
-                    <span className="text-lg font-normal text-muted-foreground">/person</span>
+                    <span className="text-lg font-normal text-muted-foreground">{t('detail.perPersonShort')}</span>
                   </p>
                   <Link
                     to={`/packages?destination=${destination.id}`}
                     className="block w-full mt-4 px-4 py-3 rounded-md bg-primary text-center text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
                   >
-                    View Packages
+                    {t('detail.viewPackages')}
                   </Link>
                   <Link
                     to="/contact"
                     className="block w-full mt-2 px-4 py-3 rounded-md border border-border text-center text-sm font-medium hover:bg-muted transition-colors"
                   >
-                    Contact Us
+                    {t('detail.contactUs')}
                   </Link>
                 </div>
 
@@ -256,17 +258,17 @@ export default function DestinationDetailPage() {
           <div className="flex items-end justify-between mb-8">
             <div>
               <h2 className="font-serif text-2xl font-bold text-foreground">
-                Where to Stay in {destination.name}
+                {t('detail.whereToStayIn', { name: destination.name })}
               </h2>
               <p className="mt-2 text-muted-foreground">
-                Handpicked accommodations for your perfect getaway.
+                {t('detail.handpickedAccommodations')}
               </p>
             </div>
             <Link
               to={`/hotels?destination=${destination.id}`}
               className="inline-flex items-center px-4 py-2 rounded-md border border-border text-sm font-medium hover:bg-muted transition-colors"
             >
-              View All Hotels
+              {t('detail.viewAllHotels')}
             </Link>
           </div>
           {hotelsLoading ? (
@@ -291,17 +293,17 @@ export default function DestinationDetailPage() {
           <div className="mb-8 flex items-end justify-between">
             <div>
               <h2 className="font-serif text-2xl font-bold text-foreground">
-                Packages for {destination.name}
+                {t('detail.packagesFor', { name: destination.name })}
               </h2>
               <p className="mt-2 text-muted-foreground">
-                Curated trips and bundled experiences available for this destination.
+                {t('detail.curatedTrips')}
               </p>
             </div>
             <Link
               to={`/packages?destination=${destination.id}`}
               className="inline-flex items-center px-4 py-2 rounded-md border border-border text-sm font-medium hover:bg-muted transition-colors"
             >
-              View All Packages
+              {t('detail.viewAllPackages')}
             </Link>
           </div>
 
@@ -324,7 +326,7 @@ export default function DestinationDetailPage() {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Star className="h-4 w-4 fill-accent text-accent" />
                       <span>{pkg.rating}</span>
-                      <span>({pkg.reviewCount} reviews)</span>
+                      <span>({pkg.reviewCount} {t('common.review', { count: pkg.reviewCount })})</span>
                     </div>
                     <h3 className="mt-3 text-lg font-semibold text-foreground">{pkg.name}</h3>
                     <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
@@ -335,7 +337,7 @@ export default function DestinationDetailPage() {
                         <p className="text-xs text-muted-foreground">{pkg.duration}</p>
                         <p className="text-lg font-bold text-foreground">{formatCurrency(pkg.price, pkg.destination?.currency || destination.currency)}</p>
                       </div>
-                      <span className="text-sm font-medium text-primary">View package</span>
+                      <span className="text-sm font-medium text-primary">{t('detail.viewPackage')}</span>
                     </div>
                   </div>
                 </Link>
@@ -344,7 +346,7 @@ export default function DestinationDetailPage() {
           ) : (
             <div className="rounded-2xl border border-border bg-card p-8 text-center">
               <p className="text-muted-foreground">
-                No packages are currently available for this destination.
+                {t('detail.noPackagesAvailable')}
               </p>
             </div>
           )}

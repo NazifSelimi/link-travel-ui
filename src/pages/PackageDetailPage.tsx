@@ -1,9 +1,11 @@
 import { Link, useParams } from 'react-router-dom';
 import { Calendar, Check, ChevronLeft, MapPin, Star, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '@/lib/money';
 import { useGetPackageQuery } from '@/store/linktravelApi';
 
 export default function PackageDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { data: currentPackage, isLoading } = useGetPackageQuery(id ?? '', {
     skip: !id,
@@ -24,15 +26,15 @@ export default function PackageDetailPage() {
       <div className="min-h-screen bg-background py-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-border bg-card p-8 text-center">
-            <h1 className="font-serif text-3xl font-bold text-foreground">Package not found</h1>
+            <h1 className="font-serif text-3xl font-bold text-foreground">{t('detail.packageNotFound')}</h1>
             <p className="mt-3 text-muted-foreground">
-              The travel package you requested could not be found.
+              {t('detail.packageNotFoundBody')}
             </p>
             <Link
               to="/packages"
               className="mt-6 inline-flex items-center rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Back to Packages
+              {t('detail.backToPackages')}
             </Link>
           </div>
         </div>
@@ -50,7 +52,7 @@ export default function PackageDetailPage() {
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
         >
           <ChevronLeft className="h-4 w-4" />
-          Back to Packages
+          {t('detail.backToPackages')}
         </Link>
 
         <div className="overflow-hidden rounded-3xl border border-border bg-card">
@@ -64,7 +66,7 @@ export default function PackageDetailPage() {
               <div className="mb-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                 <span className="inline-flex items-center gap-1">
                   <Star className="h-4 w-4 fill-accent text-accent" />
-                  {currentPackage.rating} ({currentPackage.reviewCount} reviews)
+                  {t('detail.reviewsLabel', { rating: currentPackage.rating, count: currentPackage.reviewCount })}
                 </span>
                 <span className="inline-flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
@@ -88,7 +90,7 @@ export default function PackageDetailPage() {
               </p>
 
               <div className="mt-8">
-                <h2 className="text-xl font-semibold text-foreground">What’s included</h2>
+                <h2 className="text-xl font-semibold text-foreground">{t('detail.whatsIncluded')}</h2>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {currentPackage.includes.map((item) => (
                     <div
@@ -106,7 +108,7 @@ export default function PackageDetailPage() {
             </div>
 
             <aside className="rounded-3xl border border-border bg-background p-6">
-              <p className="text-sm text-muted-foreground">Package price</p>
+              <p className="text-sm text-muted-foreground">{t('detail.packagePrice')}</p>
               {currentPackage.originalPrice && (
                 <p className="mt-2 text-sm text-muted-foreground line-through">
                   {formatCurrency(currentPackage.originalPrice, currentPackage.destination?.currency || 'EUR')}
@@ -115,19 +117,19 @@ export default function PackageDetailPage() {
               <p className="mt-1 text-4xl font-bold text-foreground">
                 {formatCurrency(currentPackage.price, currentPackage.destination?.currency || 'EUR')}
               </p>
-              <p className="text-sm text-muted-foreground">per person</p>
+              <p className="text-sm text-muted-foreground">{t('detail.perPerson')}</p>
 
               <Link
                 to={`/booking?package=${currentPackage.id}`}
                 className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Book this package
+                {t('detail.bookPackage')}
               </Link>
               <Link
                 to="/contact"
                 className="mt-3 inline-flex w-full items-center justify-center rounded-xl border border-border px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
               >
-                Ask a question
+                {t('detail.askQuestion')}
               </Link>
             </aside>
           </div>

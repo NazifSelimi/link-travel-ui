@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   Star, MapPin, Wifi, Car, Utensils, Waves, Dumbbell, Wine, Coffee, Tv, AirVent, Bath,
   ChevronLeft, ChevronRight, Users, BedDouble, Check, Heart, Share2, Calendar,
 } from 'lucide-react';
 import { Tabs } from 'antd';
+import { useTranslation } from 'react-i18next';
 import type { RoomType } from '@/types';
 import { MapEmbed } from '@/components/MapEmbed';
 import { formatCurrency } from '@/lib/money';
@@ -16,30 +17,30 @@ const amenityIcons: Record<string, React.ElementType> = {
 };
 
 export default function HotelDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: hotel, isLoading, isError } = useGetHotelQuery(id ?? '', {
     skip: !id,
   });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedRoom, setSelectedRoom] = useState<RoomType | null>(null);
+  const [selectedRoom] = useState<RoomType | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const galleryImages = hotel?.images?.length ? hotel.images : hotel?.image ? [hotel.image] : [];
   const roomTypes = hotel?.roomTypes ?? [];
   const hotelAmenities = hotel?.amenities ?? [];
   const coordinates = hotel?.coordinates ?? { lat: null, lng: null };
-  const hasCoordinates = coordinates.lat !== null && coordinates.lng !== null;
   const policies = hotel?.policies ?? {
-    checkIn: 'Contact property',
-    checkOut: 'Contact property',
-    cancellation: 'Contact property for cancellation terms.',
-    children: 'Ask the property for details',
-    pets: 'Ask the property for details',
+    checkIn: t('detail.contactProperty'),
+    checkOut: t('detail.contactProperty'),
+    cancellation: t('detail.contactPropertyTerms'),
+    children: t('detail.askProperty'),
+    pets: t('detail.askProperty'),
   };
   const hotelLocation = hotel?.destination?.name
     ? `${hotel.destination.name}${hotel.destination.country ? `, ${hotel.destination.country}` : ''}`
-    : hotel?.address || 'Location unavailable';
+    : hotel?.address || t('hotels.card.locationUnavailable');
 
   if (isLoading) {
     return (
@@ -57,10 +58,10 @@ export default function HotelDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">Hotel not found</h1>
-          <p className="mt-2 text-muted-foreground">The hotel you are looking for does not exist.</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('detail.hotelNotFound')}</h1>
+          <p className="mt-2 text-muted-foreground">{t('detail.hotelNotFoundBody')}</p>
           <button onClick={() => navigate('/hotels')} className="mt-4 px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium">
-            Browse Hotels
+            {t('detail.browseHotels')}
           </button>
         </div>
       </div>
@@ -77,16 +78,16 @@ export default function HotelDetailPage() {
   const tabItems = [
     {
       key: 'overview',
-      label: 'Overview',
+      label: t('detail.tabs.overview'),
       children: (
         <div className="mt-6 space-y-6">
           <div>
-            <h2 className="text-xl font-semibold text-foreground">About this hotel</h2>
+            <h2 className="text-xl font-semibold text-foreground">{t('detail.aboutThisHotel')}</h2>
             <p className="mt-3 text-muted-foreground leading-relaxed">{hotel.description}</p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Location</h3>
-            <p className="mt-2 text-muted-foreground">{hotel.address || 'Address unavailable'}</p>
+            <h3 className="text-lg font-semibold text-foreground">{t('detail.location')}</h3>
+            <p className="mt-2 text-muted-foreground">{hotel.address || t('detail.addressUnavailable')}</p>
             <MapEmbed
               className="mt-4"
               title={hotelLocation}
@@ -100,10 +101,10 @@ export default function HotelDetailPage() {
     },
     {
       key: 'rooms',
-      label: 'Rooms',
+      label: t('detail.tabs.rooms'),
       children: (
         <div className="mt-6 space-y-6">
-          <h2 className="text-xl font-semibold text-foreground">Available Rooms</h2>
+          <h2 className="text-xl font-semibold text-foreground">{t('detail.availableRooms')}</h2>
           <div className="space-y-4">
             {roomTypes.length > 0 ? roomTypes.map((room) => (
               <div
@@ -126,11 +127,11 @@ export default function HotelDetailPage() {
                         <p className="text-2xl font-bold text-foreground">
                           {formatCurrency(room.pricePerNight, hotel.currency)}
                         </p>
-                        <p className="text-sm text-muted-foreground">per night</p>
+                        <p className="text-sm text-muted-foreground">{t('detail.perNightShort')}</p>
                       </div>
                     </div>
                     <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1"><Users className="h-4 w-4" />Up to {room.maxGuests} guests</span>
+                      <span className="flex items-center gap-1"><Users className="h-4 w-4" />{t('detail.upToGuests', { count: room.maxGuests })}</span>
                       <span className="flex items-center gap-1"><BedDouble className="h-4 w-4" />{room.bedType}</span>
                       <span>{room.size} m²</span>
                     </div>
@@ -139,21 +140,21 @@ export default function HotelDetailPage() {
                         <span key={amenity} className="inline-block px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground text-xs">{amenity}</span>
                       ))}
                       {(room.amenities ?? []).length > 4 && (
-                        <span className="inline-block px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground text-xs">+{(room.amenities ?? []).length - 4} more</span>
+                        <span className="inline-block px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground text-xs">{t('detail.moreCountSuffix', { count: (room.amenities ?? []).length - 4 })}</span>
                       )}
                     </div>
                     <div className="mt-auto pt-4 flex items-center justify-between">
                       {room.available ? (
-                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-medium">Available</span>
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-medium">{t('detail.available')}</span>
                       ) : (
-                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs font-medium">Sold Out</span>
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs font-medium">{t('detail.soldOut')}</span>
                       )}
                       <button
                         onClick={() => handleBookRoom(room)}
                         disabled={!room.available}
                         className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
                       >
-                        Book Now
+                        {t('detail.bookNow')}
                       </button>
                     </div>
                   </div>
@@ -161,7 +162,7 @@ export default function HotelDetailPage() {
               </div>
             )) : (
               <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-                Room details are not available for this hotel yet. Please contact us to book this property.
+                {t('detail.roomDetailsUnavailable')}
               </div>
             )}
           </div>
@@ -170,10 +171,10 @@ export default function HotelDetailPage() {
     },
     {
       key: 'amenities',
-      label: 'Amenities',
+      label: t('detail.tabs.amenities'),
       children: (
         <div className="mt-6 space-y-6">
-          <h2 className="text-xl font-semibold text-foreground">Hotel Amenities</h2>
+          <h2 className="text-xl font-semibold text-foreground">{t('detail.hotelAmenities')}</h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             {hotelAmenities.length > 0 ? hotelAmenities.map((amenity) => {
               const Icon = amenityIcons[amenity] || Check;
@@ -185,7 +186,7 @@ export default function HotelDetailPage() {
               );
             }) : (
               <div className="col-span-full rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-                Amenities have not been added for this hotel yet.
+                {t('detail.amenitiesUnavailable')}
               </div>
             )}
           </div>
@@ -194,24 +195,24 @@ export default function HotelDetailPage() {
     },
     {
       key: 'policies',
-      label: 'Policies',
+      label: t('detail.tabs.policies'),
       children: (
         <div className="mt-6 space-y-6">
-          <h2 className="text-xl font-semibold text-foreground">Hotel Policies</h2>
+          <h2 className="text-xl font-semibold text-foreground">{t('detail.hotelPolicies')}</h2>
           <div className="space-y-4">
             <div className="flex items-start gap-4">
               <div className="rounded-full bg-primary/10 p-2"><Calendar className="h-5 w-5 text-primary" /></div>
               <div>
-                <h3 className="font-medium text-foreground">Check-in / Check-out</h3>
+                <h3 className="font-medium text-foreground">{t('detail.checkInOutTitle')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Check-in: {policies.checkIn} | Check-out: {policies.checkOut}
+                  {t('detail.checkInOutValue', { in: policies.checkIn, out: policies.checkOut })}
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-4">
               <div className="rounded-full bg-primary/10 p-2"><Check className="h-5 w-5 text-primary" /></div>
               <div>
-                <h3 className="font-medium text-foreground">Cancellation Policy</h3>
+                <h3 className="font-medium text-foreground">{t('detail.cancellationPolicy')}</h3>
                 <p className="text-sm text-muted-foreground">{policies.cancellation}</p>
               </div>
             </div>
@@ -220,13 +221,13 @@ export default function HotelDetailPage() {
                 <span className={policies.pets ? 'text-emerald-600' : 'text-destructive'}>
                   {policies.pets ? '✓' : '✗'}
                 </span>
-                Pets policy: {policies.pets}
+                {t('detail.petsPolicy')}: {policies.pets}
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span className={policies.children ? 'text-emerald-600' : 'text-muted-foreground'}>
                   {policies.children ? '✓' : '•'}
                 </span>
-                Children policy: {policies.children || 'Ask the property for details'}
+                {t('detail.childrenPolicy')}: {policies.children || t('detail.askProperty')}
               </div>
             </div>
           </div>
@@ -249,10 +250,10 @@ export default function HotelDetailPage() {
         {/* Gallery Navigation */}
         {galleryImages.length > 1 && (
           <>
-            <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 text-foreground backdrop-blur-sm transition-colors hover:bg-background" aria-label="Previous image">
+            <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 text-foreground backdrop-blur-sm transition-colors hover:bg-background" aria-label={t('detail.previousImage')}>
               <ChevronLeft className="h-6 w-6" />
             </button>
-            <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 text-foreground backdrop-blur-sm transition-colors hover:bg-background" aria-label="Next image">
+            <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 text-foreground backdrop-blur-sm transition-colors hover:bg-background" aria-label={t('detail.nextImage')}>
               <ChevronRight className="h-6 w-6" />
             </button>
           </>
@@ -261,7 +262,7 @@ export default function HotelDetailPage() {
         {/* Image Counter */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
           {galleryImages.map((_, index) => (
-            <button key={index} onClick={() => setCurrentImageIndex(index)} className={`h-2 w-2 rounded-full transition-colors ${index === currentImageIndex ? 'bg-primary' : 'bg-background/50'}`} aria-label={`Go to image ${index + 1}`} />
+            <button key={index} onClick={() => setCurrentImageIndex(index)} className={`h-2 w-2 rounded-full transition-colors ${index === currentImageIndex ? 'bg-primary' : 'bg-background/50'}`} aria-label={t('detail.goToImage', { index: index + 1 })} />
           ))}
         </div>
 
@@ -278,7 +279,7 @@ export default function HotelDetailPage() {
         {/* Back Button */}
         <Link to="/hotels" className="absolute top-4 left-4 flex items-center gap-2 rounded-full bg-background/80 px-4 py-2 text-sm font-medium text-foreground backdrop-blur-sm transition-colors hover:bg-background">
           <ChevronLeft className="h-4 w-4" />
-          Back to Hotels
+          {t('detail.backToHotels')}
         </Link>
       </div>
 
@@ -297,7 +298,7 @@ export default function HotelDetailPage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-accent text-accent" />
-                  {hotel.rating} ({hotel.reviewCount} reviews)
+                  {t('detail.reviewsLabel', { rating: hotel.rating, count: hotel.reviewCount })}
                 </span>
               </div>
             </div>
@@ -310,33 +311,33 @@ export default function HotelDetailPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-24 rounded-xl border border-border bg-card p-6">
               <div className="text-center">
-                <p className="text-sm text-muted-foreground">Starting from</p>
+                <p className="text-sm text-muted-foreground">{t('detail.startingFrom')}</p>
                 <p className="text-3xl font-bold text-foreground">
                   {formatCurrency(hotel.pricePerNight, hotel.currency)}
-                  <span className="text-base font-normal text-muted-foreground">/night</span>
+                  <span className="text-base font-normal text-muted-foreground">{t('hotels.card.perNight')}</span>
                 </p>
               </div>
               <div className="mt-6 space-y-4">
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <Star className="h-4 w-4 fill-accent text-accent" />
                   <span className="font-medium text-foreground">{hotel.rating}</span>
-                  <span>({hotel.reviewCount} reviews)</span>
+                  <span>({hotel.reviewCount} {t('common.review', { count: hotel.reviewCount })})</span>
                 </div>
                 <button
                   onClick={() => setActiveTab('rooms')}
                   className="w-full px-4 py-3 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
                 >
-                  View Rooms & Prices
+                  {t('detail.viewRoomsPrices')}
                 </button>
-                <p className="text-center text-xs text-muted-foreground">Final terms confirmed by Link Travel</p>
+                <p className="text-center text-xs text-muted-foreground">{t('detail.finalTermsConfirmed')}</p>
               </div>
               <div className="mt-6 border-t border-border pt-6">
-                <h4 className="font-medium text-foreground mb-3">Quick Facts</h4>
+                <h4 className="font-medium text-foreground mb-3">{t('detail.quickFacts')}</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" />{roomTypes.length} room types available</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" />{hotelAmenities.length}+ amenities</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" />24/7 customer support</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" />Best price guarantee</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" />{t('detail.facts.roomTypes', { count: roomTypes.length })}</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" />{t('detail.facts.amenitiesCount', { count: hotelAmenities.length })}</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" />{t('detail.facts.support')}</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" />{t('detail.facts.bestPrice')}</li>
                 </ul>
               </div>
             </div>
