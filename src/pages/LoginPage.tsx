@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Input, Button, Typography, Card, Checkbox, message, Alert } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearError, setSession } from '@/store/slices/authSlice';
 import { useLoginMutation } from '@/store/linktravelApi';
@@ -15,6 +16,7 @@ interface LoginFormValues {
 }
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,10 +35,10 @@ export default function LoginPage() {
     try {
       const session = await login({ email: values.email, password: values.password }).unwrap();
       dispatch(setSession(session));
-      message.success('Welcome back!');
+      message.success(t('auth.welcomeBack'));
       navigate(from, { replace: true });
     } catch (submitError) {
-      message.error((submitError as Error).message || 'Login failed. Please try again.');
+      message.error((submitError as Error).message || t('auth.loginFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -79,7 +81,7 @@ export default function LoginPage() {
             />
           </Link>
           <Paragraph type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
-            Sign in to your account
+            {t('auth.signInToAccount')}
           </Paragraph>
         </div>
 
@@ -96,10 +98,10 @@ export default function LoginPage() {
 
         <div>
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Email</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>{t('auth.email')}</label>
             <Input
               prefix={<MailOutlined style={{ color: '#bfbfbf' }} />}
-              placeholder="you@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               size="large"
               autoComplete="email"
               value={email}
@@ -109,10 +111,10 @@ export default function LoginPage() {
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Password</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>{t('auth.password')}</label>
             <Input.Password
               prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
-              placeholder="Enter your password"
+              placeholder={t('auth.passwordPlaceholder')}
               size="large"
               autoComplete="current-password"
               value={password}
@@ -124,7 +126,7 @@ export default function LoginPage() {
           <div style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Checkbox checked={remember} onChange={(event) => setRemember(event.target.checked)}>
-                Remember me
+                {t('auth.rememberMe')}
               </Checkbox>
             </div>
           </div>
@@ -138,16 +140,16 @@ export default function LoginPage() {
               size="large"
               loading={submitting}
             >
-              Sign In
+              {t('auth.signIn')}
             </Button>
           </div>
         </div>
 
         <div style={{ textAlign: 'center' }}>
           <Text type="secondary">
-            Don't have an account?{' '}
+            {t('auth.dontHaveAccount')}{' '}
             <Link to="/register" style={{ fontWeight: 500 }}>
-              Sign up
+              {t('auth.signUp')}
             </Link>
           </Text>
         </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input, Button, Typography, Card, message, Alert } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearError, setSession } from '@/store/slices/authSlice';
 import { useRegisterMutation } from '@/store/linktravelApi';
@@ -17,6 +18,7 @@ interface RegisterFormValues {
 }
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -30,17 +32,17 @@ export default function RegisterPage() {
 
   const handleSubmit = async (values: RegisterFormValues) => {
     if (!values.firstName || !values.lastName || !values.email || !values.password || !values.confirmPassword) {
-      message.error('Please complete all required fields.');
+      message.error(t('auth.completeRequired'));
       return;
     }
 
     if (values.password.length < 8) {
-      message.error('Password must be at least 8 characters.');
+      message.error(t('auth.passwordTooShort'));
       return;
     }
 
     if (values.password !== values.confirmPassword) {
-      message.error('Passwords do not match.');
+      message.error(t('auth.passwordsMismatch'));
       return;
     }
 
@@ -55,10 +57,10 @@ export default function RegisterPage() {
         confirmPassword: values.confirmPassword,
       }).unwrap();
       dispatch(setSession(session));
-      message.success('Account created! Welcome to LinkTravel.');
+      message.success(t('auth.accountCreated'));
       navigate('/', { replace: true });
     } catch (submitError) {
-      message.error((submitError as Error).message || 'Registration failed. Please try again.');
+      message.error((submitError as Error).message || t('auth.registrationFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -103,7 +105,7 @@ export default function RegisterPage() {
             />
           </Link>
           <Paragraph type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
-            Create your account
+            {t('auth.createAccount')}
           </Paragraph>
         </div>
 
@@ -121,7 +123,7 @@ export default function RegisterPage() {
         <div>
           <div style={{ display: 'flex', gap: 12 }}>
             <div style={{ flex: 1, marginBottom: 16 }}>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>First Name</label>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>{t('auth.firstName')}</label>
               <Input
                 prefix={<UserOutlined style={{ color: '#bfbfbf' }} />}
                 placeholder="John"
@@ -132,7 +134,7 @@ export default function RegisterPage() {
               />
             </div>
             <div style={{ flex: 1, marginBottom: 16 }}>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Last Name</label>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>{t('auth.lastName')}</label>
               <Input
                 placeholder="Doe"
                 size="large"
@@ -144,10 +146,10 @@ export default function RegisterPage() {
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Email</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>{t('auth.email')}</label>
             <Input
               prefix={<MailOutlined style={{ color: '#bfbfbf' }} />}
-              placeholder="you@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               size="large"
               autoComplete="email"
               value={email}
@@ -156,10 +158,10 @@ export default function RegisterPage() {
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Password</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>{t('auth.password')}</label>
             <Input.Password
               prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
-              placeholder="At least 8 characters"
+              placeholder={t('auth.newPasswordPlaceholder')}
               size="large"
               autoComplete="new-password"
               value={password}
@@ -168,10 +170,10 @@ export default function RegisterPage() {
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Confirm Password</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>{t('auth.confirmPassword')}</label>
             <Input.Password
               prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
-              placeholder="Confirm your password"
+              placeholder={t('auth.confirmPasswordPlaceholder')}
               size="large"
               autoComplete="new-password"
               value={confirmPassword}
@@ -189,16 +191,16 @@ export default function RegisterPage() {
               size="large"
               loading={submitting}
             >
-              Create Account
+              {t('auth.createAccountButton')}
             </Button>
           </div>
         </div>
 
         <div style={{ textAlign: 'center' }}>
           <Text type="secondary">
-            Already have an account?{' '}
+            {t('auth.alreadyHaveAccount')}{' '}
             <Link to="/login" style={{ fontWeight: 500 }}>
-              Sign in
+              {t('auth.signIn')}
             </Link>
           </Text>
         </div>
